@@ -123,7 +123,10 @@ experiments/
 *.sqlite
 *.sqlite3
 
+*product_spec
+
 # CSV data files (optional - uncomment if you don't want to track data)
 # *.csv
 # data/
 # sample_data/
+
