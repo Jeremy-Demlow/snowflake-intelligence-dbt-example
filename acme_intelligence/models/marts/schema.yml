@@ -1,0 +1,279 @@
+version: 2
+
+models:
+  - name: fct_technician_performance
+    description: "Comprehensive technician performance fact table aggregating job metrics, revenue, ratings, and performance indicators by technician. This is the core table for technician analytics."
+    
+    columns:
+      - name: technician_id
+        description: "Unique identifier for the technician"
+        tests:
+          - not_null
+          - unique
+      
+      - name: technician_name
+        description: "Full name of the technician"
+        tests:
+          - not_null
+          
+      - name: first_name
+        description: "Technician first name"
+        
+      - name: last_name
+        description: "Technician last name"
+          
+      - name: specialization
+        description: "Technical specialization (HVAC, Plumbing, Electrical, etc.)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HVAC', 'Plumbing', 'Electrical', 'Roofing']
+              
+      - name: certification_level
+        description: "Certification level (Junior, Senior, Expert)"
+        tests:
+          - accepted_values:
+              values: ['Junior', 'Senior', 'Expert']
+              
+      - name: total_jobs
+        description: "Total number of jobs performed by technician"
+        tests:
+          - not_null
+              
+      - name: completed_jobs
+        description: "Number of jobs completed successfully"
+        tests:
+          - not_null
+              
+      - name: total_revenue
+        description: "Total revenue generated from all jobs"
+        tests:
+          - not_null
+              
+      - name: revenue_2025
+        description: "Revenue generated specifically in 2025"
+              
+      - name: avg_job_revenue
+        description: "Average revenue per job"
+              
+      - name: avg_rating
+        description: "Average customer rating (1-5 stars)"
+              
+      - name: total_reviews
+        description: "Total number of customer reviews received"
+              
+      - name: positive_reviews
+        description: "Number of positive reviews (4-5 stars)"
+              
+      - name: negative_reviews
+        description: "Number of negative reviews (1-2 stars)"
+              
+      - name: performance_category
+        description: "Performance rating category based on average rating"
+        tests:
+          - accepted_values:
+              values: ['Excellent', 'Good', 'Average', 'Poor', 'Very Poor', 'No Reviews']
+              
+      - name: is_underperforming
+        description: "Flag indicating if technician has average rating below 3 stars"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+              
+      - name: years_experience
+        description: "Years of experience in the field"
+
+  - name: fct_jobs
+    description: "Individual job records with comprehensive details about services performed, including customer information, technician details, and review data."
+    
+    columns:
+      - name: job_id
+        description: "Unique identifier for the job"
+        tests:
+          - not_null
+          - unique
+          
+      - name: customer_id
+        description: "Customer who requested the job"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+              
+      - name: technician_id
+        description: "Technician who performed the job"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_technicians')
+              field: technician_id
+              
+      - name: job_type
+        description: "Type of service job"
+        tests:
+          - accepted_values:
+              values: ['Installation', 'Repair', 'Maintenance', 'Emergency']
+              
+      - name: job_status
+        description: "Current status of the job"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Scheduled', 'In Progress', 'Completed', 'Cancelled']
+              
+      - name: job_revenue
+        description: "Revenue generated from the job"
+        tests:
+          - not_null
+              
+      - name: job_duration_hours
+        description: "Duration of job in hours"
+              
+      - name: revenue_category
+        description: "Categorized job value based on revenue"
+        tests:
+          - accepted_values:
+              values: ['High Value', 'Medium Value', 'Low Value', 'Minimal Value']
+              
+      - name: duration_category
+        description: "Categorized job duration"
+        tests:
+          - accepted_values:
+              values: ['Long Duration', 'Medium Duration', 'Short Duration', 'Quick Job']
+              
+      - name: is_completed
+        description: "Flag indicating if job is completed"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+              
+      - name: has_review
+        description: "Flag indicating if job has a customer review"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+              
+      - name: job_rating
+        description: "Customer rating for this job (1-5 stars)"
+              
+      - name: is_positive_review
+        description: "Flag indicating if review is positive (4-5 stars)"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+              
+      - name: is_negative_review
+        description: "Flag indicating if review is negative (1-2 stars)"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+  - name: fct_ndr_calculations
+    description: "Net Dollar Retention (NDR) calculations with ARR metrics and customer segmentation for financial analysis. Critical for understanding revenue growth and customer expansion."
+    
+    columns:
+      - name: ndr_parent
+        description: "Parent account identifier for NDR calculation"
+        tests:
+          - not_null
+          
+      - name: month_id
+        description: "Month identifier for the NDR calculation period"
+        tests:
+          - not_null
+          
+      - name: billing_month
+        description: "Billing month date"
+        tests:
+          - not_null
+          
+      - name: ndr_percentage
+        description: "Net Dollar Retention percentage"
+        tests:
+          - not_null
+              
+      - name: l3m_arr_current
+        description: "Current Last 3 Months Annual Recurring Revenue"
+        tests:
+          - not_null
+              
+      - name: l3m_arr_previous_year
+        description: "Previous year Last 3 Months Annual Recurring Revenue"
+        tests:
+          - not_null
+              
+      - name: arr_expansion
+        description: "ARR expansion amount (current - previous)"
+        tests:
+          - not_null
+          
+      - name: market_segment
+        description: "Customer market segment"
+        tests:
+          - accepted_values:
+              values: ['Residential', 'Commercial', 'Industrial']
+              
+      - name: size_segment
+        description: "Customer size segment"
+        tests:
+          - accepted_values:
+              values: ['SMB', 'Mid-Market', 'Enterprise']
+              
+      - name: trade_segment
+        description: "Customer trade segment"
+        tests:
+          - accepted_values:
+              values: ['HVAC', 'Plumbing', 'Electrical', 'Multi-Trade']
+              
+      - name: product_category
+        description: "Product category"
+        tests:
+          - accepted_values:
+              values: ['Core Platform', 'Add-on Modules', 'Premium Features']
+
+  - name: dim_customer_segments
+    description: "Customer segmentation dimension table providing business context for customer analysis. Essential for understanding customer mix and targeting."
+    
+    columns:
+      - name: parent_account_id
+        description: "Parent account identifier"
+        tests:
+          - not_null
+          - unique
+          
+      - name: market_segment
+        description: "Market segment classification"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Residential', 'Commercial', 'Industrial']
+              
+      - name: size_segment
+        description: "Company size classification"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SMB', 'Mid-Market', 'Enterprise']
+              
+      - name: trade_segment
+        description: "Trade specialization segment"
+        tests:
+          - accepted_values:
+              values: ['HVAC', 'Plumbing', 'Electrical', 'Multi-Trade']
+              
+      - name: product_category
+        description: "Product category classification"
+        tests:
+          - accepted_values:
+              values: ['Core Platform', 'Add-on Modules', 'Premium Features']
+
+# Model-level tests for data quality
+tests:
+  - name: test_technician_jobs_consistency
+    description: "Ensure all technicians in fct_jobs exist in fct_technician_performance"
+    
+  - name: test_revenue_aggregation_accuracy
+    description: "Ensure revenue totals are consistent between job and technician levels"

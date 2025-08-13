@@ -1,0 +1,118 @@
+semantic_model:
+  name: acme_analytics
+  description: "ACME Intelligence semantic model for analyzing technician performance, job revenue, and customer satisfaction"
+  
+  model: ref('fct_technician_performance')
+  
+  defaults:
+    agg_time_dimension: last_updated
+  
+  dimensions:
+    - name: technician_id
+      type: categorical
+      description: "Unique identifier for technician"
+      
+    - name: technician_name  
+      type: categorical
+      description: "Full name of the technician"
+      
+    - name: first_name
+      type: categorical
+      description: "Technician first name"
+      
+    - name: last_name
+      type: categorical  
+      description: "Technician last name"
+      
+    - name: specialization
+      type: categorical
+      description: "Technical specialization (HVAC, Plumbing, Electrical, etc.)"
+      
+    - name: certification_level
+      type: categorical
+      description: "Certification level (Junior, Senior, Expert)"
+      
+    - name: company_name
+      type: categorical
+      description: "Name of the service company"
+      
+    - name: industry
+      type: categorical
+      description: "Industry vertical (HVAC, Plumbing, Electrical, Roofing)"
+      
+    - name: company_size
+      type: categorical
+      description: "Company size classification (Small, Medium, Large)"
+      
+    - name: subscription_tier
+      type: categorical
+      description: "ACME Services subscription level (Basic, Pro, Enterprise)"
+      
+    - name: performance_category
+      type: categorical
+      description: "Performance rating (Excellent, Good, Average, Poor, Very Poor, No Reviews)"
+      
+    - name: is_underperforming
+      type: categorical
+      description: "Flag indicating if technician has average rating below 3 stars"
+      
+    - name: last_updated
+      type: time
+      type_params:
+        time_granularity: day
+      description: "Last update timestamp"
+  
+  measures:
+    - name: total_jobs
+      agg: sum
+      description: "Total number of jobs performed by technician"
+      
+    - name: completed_jobs
+      agg: sum  
+      description: "Number of completed jobs"
+      
+    - name: total_revenue
+      agg: sum
+      description: "Total revenue generated from all jobs"
+      
+    - name: revenue_2025
+      agg: sum
+      description: "Revenue generated in 2025"
+      
+    - name: avg_job_revenue
+      agg: average
+      description: "Average revenue per job"
+      
+    - name: total_reviews
+      agg: sum
+      description: "Total number of customer reviews received"
+      
+    - name: avg_rating
+      agg: average
+      description: "Average customer rating (1-5 stars)"
+      
+    - name: positive_reviews
+      agg: sum
+      description: "Number of positive reviews (4-5 stars)"
+      
+    - name: negative_reviews
+      agg: sum
+      description: "Number of negative reviews (1-2 stars)"
+      
+    - name: years_experience
+      agg: average
+      description: "Years of experience in the field"
+      
+    - name: technician_count
+      agg: count_distinct
+      expr: technician_id
+      description: "Number of unique technicians"
+      
+    - name: underperforming_technician_count
+      agg: sum
+      expr: is_underperforming
+      description: "Number of underperforming technicians (avg rating < 3)"
+      
+    - name: revenue_per_review
+      agg: average
+      description: "Average revenue generated per customer review"

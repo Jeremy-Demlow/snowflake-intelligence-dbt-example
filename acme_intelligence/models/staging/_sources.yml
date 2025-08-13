@@ -1,0 +1,193 @@
+version: 2
+
+sources:
+  - name: acme_raw
+    description: Raw ACME Services data loaded from our data generation script
+    database: acme_intelligence
+    schema: raw
+    tables:
+      - name: customers
+        description: Service companies using ACME Services platform
+        columns:
+          - name: customer_id
+            description: Unique identifier for customer company
+            tests:
+              - unique
+              - not_null
+          - name: company_name
+            description: Name of the service company
+            tests:
+              - not_null
+          - name: industry
+            description: Industry vertical (HVAC, Plumbing, Electrical, Roofing)
+          - name: company_size
+            description: Company size classification (Small, Medium, Large)
+          - name: subscription_tier
+            description: ACME Services subscription level (Basic, Pro, Enterprise)
+          - name: monthly_revenue
+            description: Monthly recurring revenue from this customer
+
+      - name: technicians
+        description: Field technicians working for customer companies
+        columns:
+          - name: technician_id
+            description: Unique identifier for technician
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: Customer company this technician works for
+            tests:
+              - not_null
+              - relationships:
+                  to: source('acme_raw', 'customers')
+                  field: customer_id
+          - name: first_name
+            description: Technician first name
+          - name: last_name
+            description: Technician last name
+          - name: specialization
+            description: Technical specialization (HVAC, Plumbing, Electrical, etc.)
+          - name: certification_level
+            description: Certification level (Junior, Senior, Expert)
+          - name: years_experience
+            description: Years of experience in the field
+
+      - name: jobs
+        description: Service jobs performed by technicians
+        columns:
+          - name: job_id
+            description: Unique identifier for service job
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: Customer company for this job
+            tests:
+              - not_null
+              - relationships:
+                  to: source('acme_raw', 'customers')
+                  field: customer_id
+          - name: technician_id
+            description: Technician who performed the job
+            tests:
+              - not_null
+              - relationships:
+                  to: source('acme_raw', 'technicians')
+                  field: technician_id
+          - name: job_type
+            description: Type of service (Installation, Repair, Maintenance, Emergency)
+          - name: job_status
+            description: Current status (Scheduled, In Progress, Completed, Cancelled)
+          - name: job_revenue
+            description: Revenue generated from this job
+          - name: scheduled_date
+            description: Date job was scheduled
+          - name: completed_date
+            description: Date job was completed (if applicable)
+
+      - name: reviews
+        description: Customer reviews for completed jobs
+        columns:
+          - name: review_id
+            description: Unique identifier for review
+            tests:
+              - unique
+              - not_null
+          - name: job_id
+            description: Job this review is for
+            tests:
+              - not_null
+              - relationships:
+                  to: source('acme_raw', 'jobs')
+                  field: job_id
+          - name: technician_id
+            description: Technician being reviewed
+            tests:
+              - not_null
+              - relationships:
+                  to: source('acme_raw', 'technicians')
+                  field: technician_id
+          - name: rating
+            description: Star rating (1-5)
+            tests:
+              - accepted_values:
+                  values: [1, 2, 3, 4, 5]
+          - name: review_text
+            description: Written review content
+          - name: review_source
+            description: Source of review (Google, Yelp, ACME Services, Direct)
+          - name: review_date
+            description: Date review was submitted
+
+      - name: tenant_hierarchy
+        description: Parent-child account relationships for NDR calculations
+        columns:
+          - name: child_account_id
+            description: Child account identifier
+            tests:
+              - unique
+              - not_null
+          - name: parent_account_id
+            description: Parent account identifier
+            tests:
+              - not_null
+          - name: child_tenant_id
+            description: Child tenant identifier
+          - name: ndr_parent
+            description: NDR parent grouping identifier
+          - name: parent_start_date
+            description: Date when parent account started
+
+      - name: customer_segments
+        description: Customer segmentation data for NDR analysis
+        columns:
+          - name: parent_account_id
+            description: Parent account identifier
+            tests:
+              - unique
+              - not_null
+          - name: size_segment
+            description: Size segment (SMB, Mid-Market, Enterprise)
+            tests:
+              - accepted_values:
+                  values: ['SMB', 'Mid-Market', 'Enterprise']
+          - name: market_segment
+            description: Market segment (Residential, Commercial, Industrial)
+            tests:
+              - accepted_values:
+                  values: ['Residential', 'Commercial', 'Industrial']
+          - name: trade_segment
+            description: Trade segment (HVAC, Plumbing, Electrical, Multi-Trade)
+            tests:
+              - accepted_values:
+                  values: ['HVAC', 'Plumbing', 'Electrical', 'Multi-Trade']
+          - name: product_category
+            description: Product category (Core Platform, Add-on Modules, Premium Features)
+            tests:
+              - accepted_values:
+                  values: ['Core Platform', 'Add-on Modules', 'Premium Features']
+
+      - name: billing_metrics
+        description: Monthly ARR data for NDR calculations
+        columns:
+          - name: parent_account_id
+            description: Parent account identifier
+            tests:
+              - not_null
+          - name: child_account_id
+            description: Child account identifier
+            tests:
+              - not_null
+          - name: month_id
+            description: Month identifier in YYYYMM format
+            tests:
+              - not_null
+          - name: billing_month
+            description: Billing month date
+            tests:
+              - not_null
+          - name: l3m_arr
+            description: Last 3 months ARR amount
+            tests:
+              - not_null

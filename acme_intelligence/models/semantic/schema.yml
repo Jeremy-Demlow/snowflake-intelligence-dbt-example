@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: acme_semantic_view
+    description: "Comprehensive ACME Services semantic view for Cortex Analyst, enabling natural language queries about technician performance, job revenue, and customer satisfaction. This semantic view combines technician performance data with job information to provide business intelligence insights."
+    
+    meta:
+      semantic_view: true
+      cortex_analyst_enabled: true
+      business_domain: acme_analytics
+      deployment_methods:
+        - "dbt run --select acme_semantic_view (recommended)"
+        - "dbt compile && snow sql -f target/compiled/..."
+        - "dbt run-operation create_acme_semantic_view"
+      
+    # Note: Semantic views don't have traditional columns like regular tables
+    # Instead, they define logical business entities (tables), relationships, facts, dimensions, and metrics
+        
+  - name: stg_parsed_documents
+    description: "Parsed documents from stage for Cortex Search"
+    columns:
+      - name: relative_path
+        description: "Path to the document in the stage"
+      - name: title
+        description: "Document title"
+      - name: content
+        description: "Full document content"
+        
+  - name: acme_intelligence_complete
+    description: "Complete ACME Intelligence setup with all components"
+    columns:
+      - name: status
+        description: "Setup completion status"
+      - name: technician_count
+        description: "Number of technicians in the system"
+      - name: total_revenue_2025
+        description: "Total revenue for 2025"

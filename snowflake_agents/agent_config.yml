@@ -1,0 +1,53 @@
+agents:
+  acme_intelligence_agent:
+    name: "acme Intelligence Agent"
+    description: "Analyzes technician performance and business metrics"
+    database: "acme_INTELLIGENCE"
+    schema: "STAGING"
+    
+    tools:
+      cortex_analyst:
+        type: "cortex_analyst_text_to_sql"
+        name: "Query Technician Performance Data"
+        description: "Analyze technician performance, job revenue, ratings, and business metrics"
+        semantic_view: "acme_INTELLIGENCE.STAGING.acme_analytics_view"
+        
+      cortex_search:
+        type: "cortex_search"
+        name: "Search acme Documents"
+        description: "Search company documents and reports for strategic context"
+        search_service: "acme_INTELLIGENCE.STAGING_SEMANTIC_MODELS.acme_document_search"
+        max_results: 5
+        title_column: "TITLE"
+        id_column: "RELATIVE_PATH"
+    
+    sample_questions:
+      - "What is our total job revenue so far this year?"
+      - "Which technicians have an average rating below 3 stars?"
+      - "Show me the total job revenue associated with those low-rated technicians"
+      - "What does our annual report say about customer trust?"
+      - "How many technicians do we have by specialization?"
+      - "What's the revenue breakdown by technician performance category?"
+    
+    instructions:
+      response: |
+        You are a acme business analyst with access to technician performance data and company documents. 
+        Help users understand technician performance, identify business issues, and provide actionable insights. 
+        When users ask about revenue, always specify if they want current year (2025) data. 
+        For underperforming technicians, focus on those with average ratings below 3 stars.
+      
+      orchestration: |
+        Use Cortex Analyst for structured data questions about technicians, jobs, and revenue. 
+        Use Cortex Search for questions about company policies, goals, or document content. 
+        Combine both tools when users ask questions that require both data analysis and document context.
+
+# Future agents can be added here
+# hr_intelligence_agent:
+#   name: "HR Intelligence Agent"
+#   description: "Analyzes employee performance and HR metrics"
+#   ...
+
+# finance_intelligence_agent:
+#   name: "Finance Intelligence Agent"  
+#   description: "Analyzes financial performance and budgets"
+#   ...
