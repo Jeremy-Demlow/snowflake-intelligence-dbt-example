@@ -164,24 +164,6 @@ acme-intelligence-demo/
 - **Document search** integration with structured data via Cortex Search
 - **Financial analytics** including NDR (Net Dollar Retention) calculations
 
-## 🔍 **Key Innovation: Simplified dbt Pipeline**
-
-This project demonstrates that **complex staged dbt deployments are unnecessary** when dependencies are properly configured:
-
-❌ **Old Complex Approach:**
-```bash
-dbt run --models staging
-dbt run --models marts  
-dbt run --models semantic
-```
-
-✅ **New Simple Approach:**  
-```bash
-dbt deps
-dbt run  # Handles all 15 models in correct order automatically!
-```
-
-**Why it works:** dbt automatically resolves dependencies using `ref()` functions, building models in the correct order: `staging → marts → semantic`.
 
 ## 🛠️ **Troubleshooting**
 
