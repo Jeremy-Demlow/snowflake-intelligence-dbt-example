@@ -34,20 +34,20 @@ echo "📋 Test 3: conda Environment"
 if command -v conda &> /dev/null; then
     echo "✅ conda found"
     
-    # Check if service_titan environment exists
-    if conda env list | grep -q "service_titan"; then
-        echo "✅ service_titan environment exists"
+    # Check if acme environment exists
+    if conda env list | grep -q "acme"; then
+        echo "✅ acme environment exists"
         
         # Test the environment
-        if conda run -n service_titan python --version &> /dev/null; then
-            echo "✅ service_titan environment working"
-            conda run -n service_titan python --version
+        if conda run -n acme python --version &> /dev/null; then
+            echo "✅ acme environment working"
+            conda run -n acme python --version
         else
-            echo "❌ service_titan environment not working"
+            echo "❌ acme environment not working"
         fi
     else
-        echo "❌ service_titan environment not found"
-        echo "   Create with: conda create -n service_titan python=3.9 dbt-snowflake"
+        echo "❌ acme environment not found"
+        echo "   Create with: conda create -n acme python=3.9 dbt-snowflake"
     fi
 else
     echo "❌ conda not found"
@@ -57,12 +57,12 @@ fi
 # Test 4: Check dbt in conda environment  
 echo ""
 echo "📋 Test 4: dbt Installation"
-if conda run -n service_titan dbt --version &> /dev/null; then
-    echo "✅ dbt found in service_titan environment"
-    conda run -n service_titan dbt --version | head -1
+if conda run -n acme dbt --version &> /dev/null; then
+    echo "✅ dbt found in acme environment"
+    conda run -n acme dbt --version | head -1
 else
-    echo "❌ dbt not found in service_titan environment"
-    echo "   Install with: conda activate service_titan && pip install dbt-snowflake"
+    echo "❌ dbt not found in acme environment"
+    echo "   Install with: conda activate acme && pip install dbt-snowflake"
 fi
 
 # Test 5: Check Python scripts exist

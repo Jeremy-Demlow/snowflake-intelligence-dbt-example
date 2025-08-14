@@ -121,7 +121,6 @@ CREATE OR REPLACE SEMANTIC VIEW {{ target.database }}.SEMANTIC_MODELS.acme_finan
     NDR_DATA.smb_accounts AS COUNT(CASE WHEN NDR_DATA.size_segment = 'SMB' THEN 1 END)
       COMMENT = 'Number of SMB segment accounts',
       
-    -- Advanced window function metrics for impressive demo
     NDR_DATA.ndr_3month_trend AS AVG(NDR_DATA.avg_ndr) OVER (
       PARTITION BY NDR_DATA.ndr_parent 
       ORDER BY NDR_DATA.month_id 

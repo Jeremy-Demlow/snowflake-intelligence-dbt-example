@@ -45,7 +45,7 @@ def main():
     
     # Step 2: Generate Sample Data
     print("\n📋 STEP 2: Generating Sample Data")
-    if not run_command("cd data_setup && conda run -n service_titan python generate_acme_data.py", "Generating and loading sample data"):
+    if not run_command("cd data_setup && conda run -n acme python generate_acme_data.py", "Generating and loading sample data"):
         sys.exit(1)
     
     # Step 3: Upload Document to Stage
@@ -56,8 +56,8 @@ def main():
     # Step 4: Run dbt Transformations
     print("\n📋 STEP 4: Running dbt Transformations")
     dbt_commands = [
-        ("cd acme_intelligence && conda run -n service_titan dbt deps", "Installing dbt dependencies"),
-        ("cd acme_intelligence && conda run -n service_titan dbt run", "Running all dbt models (dbt handles dependency order automatically)")
+        ("cd acme_intelligence && conda run -n acme dbt deps", "Installing dbt dependencies"),
+        ("cd acme_intelligence && conda run -n acme dbt run", "Running all dbt models (dbt handles dependency order automatically)")
     ]
     
     for cmd, description in dbt_commands:

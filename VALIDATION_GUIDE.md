@@ -1,6 +1,6 @@
 # 🚀 acme Intelligence - Complete Validation Guide
 
-This guide provides a comprehensive approach to validating your acme Intelligence demo using **SNOWCLI** and **conda service_titan environment**.
+This guide provides a comprehensive approach to validating your acme Intelligence demo using **SNOWCLI** and **conda acme environment**.
 
 ## 🏃‍♂️ Quick Start (3 Steps)
 
@@ -29,7 +29,7 @@ Comprehensive validation of the entire pipeline from infrastructure to intellige
 - ✅ Tables, stages, and permissions setup
 - ✅ Role-based access control validation
 
-### Data Pipeline (conda service_titan)
+### Data Pipeline (conda acme)
 - ✅ Sample data generation and loading
 - ✅ Document upload to Snowflake stage
 - ✅ dbt model transformations (staging → marts → semantic)
@@ -61,15 +61,15 @@ snow sql -f snowflake_agents/acme_intelligence_agent_scalable.sql
 snow sql -f sql_scripts/validate_dbt_solution.sql
 ```
 
-### conda service_titan Commands Used  
+### conda acme Commands Used  
 ```bash
 # Data generation
-conda run -n service_titan python data_setup/generate_acme_data.py
+conda run -n acme python data_setup/generate_acme_data.py
 
 # dbt operations (SIMPLIFIED!)
-conda run -n service_titan dbt deps
-conda run -n service_titan dbt run  # Handles all 15 models automatically!
-conda run -n service_titan dbt test
+conda run -n acme dbt deps
+conda run -n acme dbt run  # Handles all 15 models automatically!
+conda run -n acme dbt test
 ```
 
 **Key Innovation:** No more staged dbt runs! Single `dbt run` command handles dependency resolution automatically.
@@ -149,20 +149,20 @@ snow connection list
 #### 2. conda Environment Issues
 ```bash
 # Create environment
-conda create -n service_titan python=3.9
+conda create -n acme python=3.9
 
 # Install dbt
-conda activate service_titan
+conda activate acme
 pip install dbt-snowflake
 
 # Test environment
-conda run -n service_titan python --version
+conda run -n acme python --version
 ```
 
 #### 3. dbt Connection Issues
 ```bash
 cd acme_intelligence
-conda run -n service_titan dbt debug
+conda run -n acme dbt debug
 ```
 Check `~/.dbt/profiles.yml` for correct Snowflake connection details.
 
@@ -187,7 +187,7 @@ snowflake-intelligence-dbt-example/
 │   ├── validate_dbt_solution.sql
 │   └── grant_user_access.sql
 │
-├── 🏗️ dbt Project (conda service_titan)
+├── 🏗️ dbt Project (conda acme)
 │   └── acme_intelligence/
 │       ├── dbt_project.yml
 │       └── models/
@@ -195,7 +195,7 @@ snowflake-intelligence-dbt-example/
 │           ├── marts/
 │           └── semantic/
 │
-├── 📊 Data Setup (conda service_titan)  
+├── 📊 Data Setup (conda acme)  
 │   ├── generate_acme_data.py
 │   └── acme_annual_report.txt
 │
@@ -232,4 +232,4 @@ If you encounter issues:
 
 ---
 
-🎉 **Happy validating!** The combination of SNOWCLI and conda service_titan environment provides a robust, scalable approach to building and validating Snowflake intelligence solutions.
+🎉 **Happy validating!** The combination of SNOWCLI and conda acme environment provides a robust, scalable approach to building and validating Snowflake intelligence solutions.

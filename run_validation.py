@@ -28,20 +28,20 @@ def run_snowcli_test():
         return False
 
 def test_conda_env():
-    """Test conda service_titan environment"""
-    print("🔍 Testing conda service_titan environment...")
+    """Test conda acme environment"""
+    print("🔍 Testing conda acme environment...")
     
     # Test conda environment
     result = subprocess.run([
-        "conda", "run", "-n", "service_titan", "python", "--version"
+        "conda", "run", "-n", "acme", "python", "--version"
     ], capture_output=True, text=True)
     
     if result.returncode == 0:
-        print("✅ conda service_titan environment working")
+        print("✅ conda acme environment working")
         print(f"Python version: {result.stdout.strip()}")
         return True
     else:
-        print("❌ conda service_titan environment failed")
+        print("❌ conda acme environment failed")
         print(f"Error: {result.stderr}")
         return False
 
@@ -55,7 +55,7 @@ def test_dbt_connection():
     
     # Test dbt debug
     result = subprocess.run([
-        "conda", "run", "-n", "service_titan", "dbt", "debug"
+        "conda", "run", "-n", "acme", "dbt", "debug"
     ], cwd="acme_intelligence", capture_output=True, text=True)
     
     if result.returncode == 0 and "All checks passed!" in result.stdout:
@@ -92,7 +92,7 @@ def main():
     
     tests = [
         ("SNOWCLI Connection", run_snowcli_test),
-        ("conda service_titan Environment", test_conda_env), 
+        ("conda acme Environment", test_conda_env), 
         ("dbt Connection", test_dbt_connection),
         ("Database Access", test_database_access)
     ]
@@ -121,7 +121,7 @@ def main():
             print("\n🛠️  Setup suggestions:")
             print("   1. Install Snowflake CLI: pip install snowflake-cli-labs")
             print("   2. Configure connection: snow connection add")
-            print("   3. Create conda env: conda create -n service_titan python=3.9 dbt-snowflake")
+            print("   3. Create conda env: conda create -n acme python=3.9 dbt-snowflake")
         
     return passed == total
 

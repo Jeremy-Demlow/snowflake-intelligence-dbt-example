@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 acme Intelligence - End-to-End Validation Script
-Validates the complete pipeline using SNOWCLI and conda service_titan environment
+Validates the complete pipeline using SNOWCLI and conda acme environment
 """
 
 import subprocess
@@ -77,12 +77,12 @@ def run_snowcli_command(sql_file, description, critical=True):
         return False, str(e)
 
 def run_conda_command(command, description, critical=True, cwd=None):
-    """Run command in conda service_titan environment"""
+    """Run command in conda acme environment"""
     log(f"Running {description}", "INFO")
-    log(f"Executing: conda run -n service_titan {command}", "INFO")
+    log(f"Executing: conda run -n acme {command}", "INFO")
     
     try:
-        full_cmd = f"conda run -n service_titan {command}"
+        full_cmd = f"conda run -n acme {command}"
         result = subprocess.run(
             full_cmd, 
             shell=True, 
@@ -117,8 +117,8 @@ def run_conda_command(command, description, critical=True, cwd=None):
         return False, str(e)
 
 def check_conda_env():
-    """Verify conda service_titan environment exists"""
-    log("Checking conda service_titan environment", "INFO")
+    """Verify conda acme environment exists"""
+    log("Checking conda acme environment", "INFO")
     
     try:
         result = subprocess.run(
@@ -127,12 +127,12 @@ def check_conda_env():
             text=True
         )
         
-        if "service_titan" in result.stdout:
-            log("conda service_titan environment found", "SUCCESS")
+        if "acme" in result.stdout:
+            log("conda acme environment found", "SUCCESS")
             return True
         else:
-            log("conda service_titan environment NOT found", "ERROR")
-            log("Create it with: conda create -n service_titan python=3.9 dbt-snowflake", "INFO")
+            log("conda acme environment NOT found", "ERROR")
+            log("Create it with: conda create -n acme python=3.9 dbt-snowflake", "INFO")
             return False
             
     except Exception as e:

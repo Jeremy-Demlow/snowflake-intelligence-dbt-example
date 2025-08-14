@@ -21,8 +21,8 @@ A comprehensive business intelligence demo using **ACME Services** as a fake cus
    ```
 3. **conda environment**:
    ```bash
-   conda create -n service_titan python=3.9 dbt-snowflake
-   conda activate service_titan
+   conda create -n acme python=3.9 dbt-snowflake
+   conda activate acme
    pip install dbt-snowflake
    ```
 4. **Snowflake connection setup**:
@@ -44,15 +44,15 @@ If you prefer to understand each step:
 snow sql -f sql_scripts/setup_complete_infrastructure.sql
 
 # 2. Generate Sample Data  
-cd data_setup && conda run -n service_titan python generate_acme_data.py && cd ..
+cd data_setup && conda run -n acme python generate_acme_data.py && cd ..
 
 # 3. Upload Documents
 snow stage copy data_setup/acme_annual_report.txt @ACME_INTELLIGENCE.RAW.ACME_STG
 
 # 4. Run dbt Pipeline (simplified!)
 cd acme_intelligence
-conda run -n service_titan dbt deps
-conda run -n service_titan dbt run  # Handles all dependencies automatically!
+conda run -n acme dbt deps
+conda run -n acme dbt run  # Handles all dependencies automatically!
 cd ..
 
 # 5. Deploy Intelligence Agent
@@ -115,7 +115,7 @@ The deployed agent can answer:
 ## 🛠️ **Tools & Architecture**
 
 - **SNOWCLI**: Infrastructure, SQL scripts, intelligence deployments
-- **conda service_titan**: Data generation, dbt transformations
+- **conda acme**: Data generation, dbt transformations
 - **dbt**: Modern data transformations and modeling
 - **Snowflake Cortex**: AI-powered analytics and search
 - **Scalable Schema**: Organized for multiple use cases
@@ -171,7 +171,7 @@ acme-intelligence-demo/
 
 1. **"Object does not exist" errors**: Ensure your Snowflake connection has ACCOUNTADMIN privileges
 2. **dbt connection issues**: Check `~/.dbt/profiles.yml` has correct account/warehouse settings
-3. **conda environment**: Make sure you're using the `service_titan` environment for dbt commands
+3. **conda environment**: Make sure you're using the `acme` environment for dbt commands
 4. **Agent deployment fails**: Agent is deployed to `SNOWFLAKE_INTELLIGENCE.AGENTS` (requires admin privileges)
 
 ### Prerequisites Check
@@ -180,7 +180,7 @@ acme-intelligence-demo/
 snow connection list
 
 # Verify conda environment
-conda env list | grep service_titan
+conda env list | grep acme
 
 # Test Snowflake connection
 snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE()"
