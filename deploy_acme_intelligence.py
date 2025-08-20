@@ -135,6 +135,9 @@ SELECT '=== PERMISSIONS UPDATED ===' as status;
     print("   • Semantic View: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_analytics_view")
     print("   • Cortex Search: ACME_INTELLIGENCE.SEARCH.acme_document_search")
     print("   • Agent: ACME_INTELLIGENCE.AGENTS.acme_intelligence_agent")
+    print("\n🛠️  To deploy custom tools (email, web scraper):")
+    print("   cd agent_tools && snow snowpark deploy")
+    print("   Tools will be available at: AGENT_TOOLS_CENTRAL.AGENT_TOOLS.*")
 
 if __name__ == "__main__":
     main()

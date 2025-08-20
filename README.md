@@ -1,208 +1,252 @@
 # ACME Intelligence - Snowflake Demo
 
-A comprehensive business intelligence demo using **ACME Services** as a fake customer, showcasing:
+A comprehensive business intelligence demo showcasing **modern data stack architecture** with **Snowflake Intelligence Agents** and **custom tool integration**.
 
 ## 🎯 **What This Demonstrates**
 
-- **Modern Data Stack**: dbt + Snowflake + Cortex AI
-- **Intelligence Components**: Semantic views, search services, and AI agents  
-- **Tool Integration**: SNOWCLI + conda environments
-- **Complete Pipeline**: Raw data → Analytics → Intelligence
-- **Simplified dbt Pipeline**: Single `dbt run` handles all dependencies automatically
+- **Modern Data Stack**: dbt + Snowflake + Cortex AI + Intelligence Agents
+- **Tool Integration**: Custom email and web scraping tools via Snowpark
+- **YAML-Driven Architecture**: Scalable agent configuration system
+- **Complete Pipeline**: Raw data → Analytics → Intelligence → Action
+- **Jeremy Howard Style**: Clean, modular, Unix philosophy design
+
+## 🏗️ **Architecture Overview**
+
+```
+📊 ACME Intelligence Demo
+├── 🛠️  agent_tools/          # Reusable Tool Library
+│   ├── src/email_tools/       # Email sender (Snowpark procedure)
+│   ├── src/web_tools/         # Web scraper w/ Claude-3.5-Sonnet AI
+│   ├── snowflake.yml          # Snowpark deployment config
+│   └── tests/                 # Local testing framework
+│
+├── 🤖 snowflake_agents/       # Agent Management System  
+│   ├── agent_configs/*.yml    # YAML agent definitions
+│   ├── agent_generator.py     # YAML → SQL converter
+│   ├── manage_agents.py       # SQL → Snowflake deployer
+│   └── generated/*.sql        # Auto-generated agent SQL
+│
+├── 📊 acme_intelligence/      # dbt Data Pipeline
+│   ├── models/staging/        # Clean data transformations
+│   ├── models/marts/          # Business logic layer
+│   └── models/semantic/       # Intelligence-ready analytics
+│
+└── 🚀 Root Level              # Deployment & Management
+    ├── deploy_acme_intelligence.py  # One-command deployment
+    ├── manage_user_access.py        # Role & permission management
+    └── validate_end_to_end.py       # Complete validation suite
+```
 
 ## 🚀 **Quick Start**
 
 ### Prerequisites
 
 1. **Snowflake Account** with ACCOUNTADMIN privileges
-2. **Snowflake CLI**: 
+2. **Snowflake CLI v3.7+**: 
    ```bash
    pip install snowflake-cli-labs
+   snow connection add  # Configure with ACCOUNTADMIN
    ```
 3. **conda environment**:
    ```bash
-   conda create -n acme python=3.9 dbt-snowflake
+   conda create -n acme python=3.9 
    conda activate acme
    pip install dbt-snowflake
    ```
-4. **Snowflake connection setup**:
-   ```bash
-   snow connection add
-   ```
-   Configure with your account details and ACCOUNTADMIN role.
 
-### ⚡ One-Command Deployment
+### ⚡ One-Command Demo Deployment
 ```bash
 python deploy_acme_intelligence.py
 ```
 
-### 🔧 Manual Step-by-Step (Optional)
-If you prefer to understand each step:
+This single command:
+- ✅ Sets up all Snowflake infrastructure  
+- ✅ Generates and loads sample data (50+ customers, 525+ jobs)
+- ✅ Runs complete dbt transformation pipeline
+- ✅ Deploys semantic views and Cortex Search
+- ✅ Creates intelligence agent with custom tools
+- ✅ Validates entire deployment
 
+## 🛠️ **Custom Tool Development**
+
+### Deploy Enhanced Tools
 ```bash
-# 1. Setup Infrastructure
-snow sql -f sql_scripts/setup_complete_infrastructure.sql
+# Deploy email sender & web scraper to Snowflake
+cd agent_tools
+snow snowpark deploy
 
-# 2. Generate Sample Data  
-cd data_setup && conda run -n acme python generate_acme_data.py && cd ..
-
-# 3. Upload Documents
-snow stage copy data_setup/acme_annual_report.txt @ACME_INTELLIGENCE.RAW.ACME_STG
-
-# 4. Run dbt Pipeline (simplified!)
-cd acme_intelligence
-conda run -n acme dbt deps
-conda run -n acme dbt run  # Handles all dependencies automatically!
-cd ..
-
-# 5. Deploy Intelligence Agent
-snow sql -f snowflake_agents/acme_intelligence_agent_scalable.sql
+# Tools deploy to: AGENT_TOOLS_CENTRAL.AGENT_TOOLS.*
+# - SEND_MAIL(recipient, subject, html_content)  
+# - WEB_SCRAPE(url) -> AI-powered competitive analysis
 ```
 
-### ✅ Validation & Testing
+### Local Tool Testing
 ```bash
-# Quick validation
-snow sql -q "SELECT * FROM SEMANTIC_VIEW(ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_analytics_view METRICS technician_count, total_revenue_sum)"
-
-# Test Cortex Search
-snow sql -q "SHOW CORTEX SEARCH SERVICES IN SCHEMA ACME_INTELLIGENCE.SEARCH"
-
-# Test Agent
-snow sql -q "SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS"
+cd agent_tools
+python test_local_scraper.py  # Test web scraper with real data
+python -m pytest tests/       # Run full test suite
 ```
 
-### User Access Management
+### Web Scraper Features
+- **Claude-3.5-Sonnet AI**: 10k token limit for deep analysis
+- **Real Competitor Detection**: Industry-specific competitor databases
+- **Rich HTML Reports**: Formatted output for agent consumption
+- **External Access**: Configured for secure web access
+
+## 🤖 **Scalable Agent Management**
+
+### YAML-Based Agent Configuration
+```yaml
+# snowflake_agents/agent_configs/acme_intelligence_agent.yml
+agent_name: "ACME_INTELLIGENCE_AGENT"
+profile:
+  display_name: "ACME Intelligence Agent"
+
+tools:
+  - name: "Send_Email"
+    type: "generic" 
+    resource:
+      identifier: "AGENT_TOOLS_CENTRAL.AGENT_TOOLS.SEND_MAIL"
+  - name: "Web_scrape"  
+    type: "generic"
+    resource:
+      identifier: "AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE"
+```
+
+### Deploy Agents (Jeremy Howard Style)
 ```bash
-# Grant full demo access
-python manage_user_access.py grant-demo <USERNAME>
+cd snowflake_agents
 
-# Create custom role
-python manage_user_access.py create-custom <USERNAME> readonly
+# Step 1: Generate SQL from YAML (single responsibility)
+python agent_generator.py --agent acme_intelligence_agent
 
-# List user permissions
-python manage_user_access.py list <USERNAME>
+# Step 2: Deploy SQL to Snowflake (single responsibility)  
+python manage_agents.py deploy acme_intelligence_agent
+
+# Environment-specific deployment
+python agent_generator.py --agent acme_intelligence_agent --environment dev
+python manage_agents.py deploy acme_intelligence_agent_dev
 ```
 
 ## 📊 **What Gets Built**
 
 ### Infrastructure
-- **Database**: `ACME_INTELLIGENCE`
-- **Schemas**: `RAW`, `STAGING`, `MARTS`, `SEMANTIC_MODELS`, `SEARCH` 
-- **Role**: `ACME_INTELLIGENCE_DEMO` with proper permissions
+- **Databases**: `ACME_INTELLIGENCE`, `AGENT_TOOLS_CENTRAL`, `SNOWFLAKE_INTELLIGENCE`
 - **Sample Data**: 50 customers, 25 technicians, 525+ jobs, 233+ reviews
-
-### Data Pipeline (dbt) - **15 Models Total**
-- **Raw Data**: Customers, technicians, jobs, reviews, documents (8 tables)
-- **Staging**: Clean, typed data models (6 views) 
-- **Marts**: Business logic and fact tables (4 tables)
-- **Semantic**: Intelligence-ready analytics (2 semantic views + 1 summary)
+- **Business Metrics**: $195,768 total revenue, 4.04 avg satisfaction
 
 ### Intelligence Components
-- **Semantic Views**: 
-  - `acme_analytics_view` - Operational data for Cortex Analyst
-  - `acme_financial_analytics_view` - Financial metrics (NDR, ARR)
-- **Search Service**: `acme_document_search` for document retrieval
-- **AI Agent**: `acme_intelligence_agent` (deployed in `SNOWFLAKE_INTELLIGENCE.AGENTS`)
+- **Semantic Views**: Operational & financial analytics for Cortex Analyst
+- **Cortex Search**: `acme_document_search` for document retrieval  
+- **AI Agent**: Full business analyst with custom tools
+- **Custom Tools**: Email sender + AI-powered web scraper
+
+### Data Pipeline (dbt) - 15 Models
+- **Staging (8)**: Clean, typed source data
+- **Marts (4)**: Business logic and fact tables  
+- **Semantic (3)**: Intelligence-ready analytics with NDR calculations
 
 ## 🧪 **Sample Business Questions**
 
-The deployed agent can answer:
-- "Which technicians have ratings below 3 stars?"
-- "What's our total revenue this year?" 
-- "Show me revenue from underperforming technicians"
-- "What does our annual report say about customer trust?"
+Ask the deployed agent:
+- *"Which technicians have ratings below 3 stars?"*
+- *"What's our total revenue this year?"*
+- *"Send a performance report to jeremy.demlow@snowflake.com"*
+- *"Analyze our competitor ServiceTitan's website"*  
+- *"What does our annual report say about customer trust?"*
+- *"Which customer segments have the highest NDR?"*
 
-## 🛠️ **Tools & Architecture**
+## 👥 **User Access Management**
 
-- **SNOWCLI**: Infrastructure, SQL scripts, intelligence deployments
-- **conda acme**: Data generation, dbt transformations
-- **dbt**: Modern data transformations and modeling
-- **Snowflake Cortex**: AI-powered analytics and search
-- **Scalable Schema**: Organized for multiple use cases
+```bash
+# Grant complete demo access
+python manage_user_access.py grant-demo <USERNAME>
 
-## 📁 **Project Structure**
+# Create custom role with specific permissions
+python manage_user_access.py create-custom <USERNAME> readonly
 
+# List all user permissions  
+python manage_user_access.py list <USERNAME>
 ```
-acme-intelligence-demo/
-├── 🔧 Deployment & Validation
-│   ├── deploy_acme_intelligence.py      # Complete deployment
-│   ├── validate_end_to_end.py          # Full validation
-│   ├── run_validation.py               # Quick tests
-│   └── test_setup.sh                   # Prerequisites check
-│
-├── 📊 Data & Models  
-│   ├── data_setup/
-│   │   ├── generate_acme_data.py       # Sample data generation
-│   │   └── acme_annual_report.txt      # Document for search
-│   └── acme_intelligence/              # dbt project
-│       ├── models/staging/             # Clean data views
-│       ├── models/marts/               # Business logic
-│       └── models/semantic/            # Intelligence layer
-│
-├── 💾 Infrastructure
-│   └── sql_scripts/
-│       ├── setup_complete_infrastructure.sql
-│       ├── validate_dbt_solution.sql
-│       └── grant_user_access.sql
-│
-├── 🧠 Intelligence
-│   └── snowflake_agents/
-│       ├── acme_intelligence_agent_scalable.sql
-│       └── manage_agents.py
-│
-└── 👥 User Management
-    └── manage_user_access.py           # Role management
+
+## ✅ **Validation & Testing**
+
+```bash
+# Quick infrastructure validation
+snow sql -q "SELECT * FROM SEMANTIC_VIEW(ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_analytics_view METRICS technician_count)"
+
+# Test custom tools
+snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.SEND_MAIL('test@example.com', 'Test', 'Hello!')"  
+snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE('https://servicetitan.com')"
+
+# Complete validation suite
+python validate_end_to_end.py
+python run_validation.py  # Quick validation tests
 ```
+
+## 🛠️ **Development Philosophy (Jeremy Howard Approved)**
+
+### Unix Philosophy: Do One Thing Well
+- **`agent_tools/`**: Tool development and deployment (one responsibility)
+- **`snowflake_agents/`**: Agent configuration and management (one responsibility)  
+- **`agent_generator.py`**: YAML → SQL conversion (one job)
+- **`manage_agents.py`**: SQL → Snowflake deployment (one job)
+
+### Clean Architecture Principles
+- ✅ **No string escaping hell**: Python → SQL, not manual JSON
+- ✅ **Modular design**: Each component is independently testable
+- ✅ **Clear separation**: Tools ≠ Agents ≠ Data Pipeline  
+- ✅ **Easy debugging**: Know exactly where issues occur
+- ✅ **Scalable**: Add tools and agents without complexity
 
 ## 🎯 **Business Value Demonstrated**
 
-- **$195,768 total revenue** tracked across 25 technicians  
-- **$82,132 revenue in 2025** specifically 
-- **4.04 average** customer satisfaction rating
-- **2 underperforming technicians** automatically identified (< 3 star rating)
-- **Natural language** business intelligence queries via AI agent
-- **Document search** integration with structured data via Cortex Search
-- **Financial analytics** including NDR (Net Dollar Retention) calculations
+- **$195,768 total revenue** tracked with real-time analytics
+- **2 underperforming technicians** automatically identified  
+- **Natural language** business intelligence via AI agent
+- **Automated workflows**: Email reports, competitive analysis
+- **Document integration**: Semantic search with structured data
+- **Financial analytics**: NDR, ARR expansion, customer segmentation
 
-
-## 🛠️ **Troubleshooting**
+## 📋 **Troubleshooting**
 
 ### Common Issues
-
-1. **"Object does not exist" errors**: Ensure your Snowflake connection has ACCOUNTADMIN privileges
-2. **dbt connection issues**: Check `~/.dbt/profiles.yml` has correct account/warehouse settings
-3. **conda environment**: Make sure you're using the `acme` environment for dbt commands
-4. **Agent deployment fails**: Agent is deployed to `SNOWFLAKE_INTELLIGENCE.AGENTS` (requires admin privileges)
+1. **"Object does not exist"**: Ensure ACCOUNTADMIN privileges
+2. **dbt failures**: Check `conda activate acme` and connection settings
+3. **Tool deployment fails**: Verify Snowflake CLI connection with `snow connection list`
+4. **Agent access issues**: Tools deploy to `AGENT_TOOLS_CENTRAL.AGENT_TOOLS.*`
 
 ### Prerequisites Check
-```bash
-# Verify Snowflake CLI
-snow connection list
-
-# Verify conda environment
-conda env list | grep acme
-
-# Test Snowflake connection
-snow sql -q "SELECT CURRENT_USER(), CURRENT_ROLE()"
+```bash  
+snow connection list                    # Verify CLI setup
+conda env list | grep acme             # Check conda environment
+snow sql -q "SELECT CURRENT_ROLE()"    # Verify privileges
 ```
 
-## 📋 **Next Steps**
+## 🔧 **Advanced Configuration**
 
-After deployment:
-1. **Test semantic views** with Cortex Analyst queries
-2. **Chat with the agent** using natural language business questions
-3. **Explore document search** functionality with company reports  
-4. **Scale** by adding more data sources and business domains
+### Environment-Specific Deployments
+```yaml
+# snowflake_agents/agent_configs/environments/dev.yml
+agent:
+  database: "DEV_ACME_INTELLIGENCE"
+default_execution_environment:  
+  warehouse: "DEV_WAREHOUSE"
+```
 
-## 🧪 **Sample Business Questions for the Agent**
+### Adding New Tools
+1. Create tool in `agent_tools/src/your_tool/`
+2. Add to `agent_tools/snowflake.yml` 
+3. Deploy: `cd agent_tools && snow snowpark deploy`
+4. Reference in agent YAML: `AGENT_TOOLS_CENTRAL.AGENT_TOOLS.YOUR_TOOL`
 
-Once deployed, try asking the agent:
-- *"Which technicians have ratings below 3 stars?"*
-- *"What's our total revenue this year?"*
-- *"Show me revenue from underperforming technicians"*  
-- *"What is our latest NDR across all customers?"*
-- *"Which customer segments have the highest ARR expansion?"*
+### Adding New Agents
+1. Create `snowflake_agents/agent_configs/your_agent.yml`
+2. Generate: `python agent_generator.py --agent your_agent`  
+3. Deploy: `python manage_agents.py deploy your_agent`
 
 ---
 
-🏢 **ACME Services** - *Your Trusted Fake Company for Demonstrations*
+🏢 **ACME Services** - *Your Trusted Partner for Snowflake Intelligence Demonstrations*
+
+*This demo showcases production-ready patterns for Snowflake Intelligence with custom tool integration, following Jeremy Howard's principles of clean, modular, and maintainable code.*
