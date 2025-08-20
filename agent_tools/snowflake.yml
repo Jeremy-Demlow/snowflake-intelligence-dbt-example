@@ -1,0 +1,33 @@
+definition_version: 2
+
+env:
+  database: "AGENT_TOOLS_CENTRAL"
+  schema: "AGENT_TOOLS"
+  warehouse: "HOL_WAREHOUSE"
+  stage: "AGENT_TOOLS_STAGE"
+
+entities:
+  send_mail:
+    type: "procedure"
+    handler: "email_tools.sender.send_email_for_agent"
+    signature:
+      - name: "recipient"
+        type: "TEXT"
+      - name: "subject" 
+        type: "TEXT"
+      - name: "text"
+        type: "TEXT"
+    returns: "TEXT"
+    stage: "AGENT_TOOLS_STAGE"
+    artifacts: ["src/"]
+
+  web_scrape:
+    type: "procedure"
+    handler: "web_tools.scraper.scrape_website_for_agent"
+    signature:
+      - name: "url"
+        type: "TEXT"
+    returns: "TEXT"
+    stage: "AGENT_TOOLS_STAGE"
+    artifacts: ["src/"]
+    external_access_integrations: ["AGENT_TOOLS_EXTERNAL_ACCESS_INTEGRATION"]
