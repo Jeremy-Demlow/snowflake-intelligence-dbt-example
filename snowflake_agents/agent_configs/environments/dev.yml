@@ -1,0 +1,8 @@
+# Development Environment Overrides
+# Override settings for development/testing
+
+agent:
+  database: "DEV_SNOWFLAKE_INTELLIGENCE"  # Use dev database
+  
+default_execution_environment:
+  warehouse: "DEV_WAREHOUSE"  # Smaller warehouse for dev

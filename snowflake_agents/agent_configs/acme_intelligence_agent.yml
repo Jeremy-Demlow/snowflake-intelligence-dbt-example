@@ -1,0 +1,104 @@
+# ACME Intelligence Agent Configuration
+# Clean, declarative agent definition
+
+agent:
+  name: "ACME_INTELLIGENCE_AGENT"
+  display_name: "ACME Intelligence Agent"
+  comment: "ACME Intelligence Agent for analyzing technician performance and business metrics"
+  database: "SNOWFLAKE_INTELLIGENCE"
+  schema: "AGENTS"
+
+instructions:
+  response: >
+    You are a ACME business analyst with access to both operational and financial data, 
+    plus company documents. Help users understand technician performance, analyze financial 
+    metrics like NDR, and provide actionable insights.
+  
+  orchestration: >
+    Use 'Query Operational Data' for questions about technicians, jobs, and operational revenue. 
+    Use 'Query Financial Metrics' for NDR, ARR expansion, customer segments, and financial analytics. 
+    Use 'Search Documents' for company policies and strategic context.
+  
+  sample_questions:
+    - "What is our total job revenue so far this year?"
+    - "Which technicians have an average rating below 3 stars?"
+    - "What is the latest NDR across all customers?"
+    - "What is the latest NDR for Enterprise segment customers?"
+    - "Show me NDR trends by market segment over the last 6 months"
+    - "Which customer segments have the highest ARR expansion?"
+    - "What does our annual report say about customer trust?"
+
+# Default execution environment for tools
+default_execution_environment: &default_execution_environment
+  type: "warehouse"
+  warehouse: "HOL_WAREHOUSE"
+
+tools:
+  # Native Snowflake tools
+  - name: "Query Operational Data"
+    type: "cortex_analyst_text_to_sql"
+    description: "Analyze technician performance, job revenue, ratings, and operational business metrics"
+    resources:
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_analytics_view"
+      execution_environment: 
+        <<: *default_execution_environment
+
+  - name: "Query Financial Metrics"
+    type: "cortex_analyst_text_to_sql"
+    description: "Analyze NDR, ARR expansion, customer segments, and financial performance metrics"
+    resources:
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_financial_analytics_view"
+      execution_environment:
+        <<: *default_execution_environment
+
+  - name: "Search ACME Services Documents"
+    type: "cortex_search"
+    description: "Search company documents, annual reports, and policies for strategic context"
+    resources:
+      name: "ACME_INTELLIGENCE.SEARCH.acme_document_search"
+      max_results: 5
+      title_column: "TITLE"
+      id_column: "RELATIVE_PATH"
+
+  # Custom procedure tools
+  - name: "Send_Email"
+    type: "generic"
+    description: "Send emails to recipients with subject and HTML content. Always use HTML formatted content."
+    input_schema:
+      type: "object"
+      properties:
+        recipient:
+          description: "Email address of the recipient"
+          type: "string"
+        subject:
+          description: "Subject line of the email"
+          type: "string"
+        text:
+          description: "HTML content of the email"
+          type: "string"
+      required: ["recipient", "subject", "text"]
+    resources:
+      type: "procedure"
+      identifier: "AGENT_TOOLS_CENTRAL.AGENT_TOOLS.SEND_MAIL"
+      name: "SEND_MAIL(VARCHAR, VARCHAR, VARCHAR)"
+      execution_environment:
+        <<: *default_execution_environment
+        query_timeout: 0
+
+  - name: "Web_scrape"
+    type: "generic"
+    description: "Scrape and analyze websites for competitive intelligence and market research"
+    input_schema:
+      type: "object"
+      properties:
+        url:
+          description: "The URL of the website to scrape and analyze"
+          type: "string"
+      required: ["url"]
+    resources:
+      type: "procedure"
+      identifier: "AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE"
+      name: "WEB_SCRAPE(VARCHAR)"
+      execution_environment:
+        <<: *default_execution_environment
+        query_timeout: 0
