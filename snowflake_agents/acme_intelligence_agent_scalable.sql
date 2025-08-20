@@ -2,7 +2,8 @@
 -- Creates agent with proper warehouse settings for Cortex Analyst queries
 
 -- Create the agent with warehouse configuration
-CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.acme_intelligence_agent
+CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.ACME_INTELLIGENCE_AGENT
+
 WITH PROFILE = '{"display_name": "ACME Intelligence Agent"}'
 COMMENT = 'ACME Intelligence Agent for analyzing technician performance and business metrics'
 FROM SPECIFICATION $$
@@ -42,6 +43,35 @@ FROM SPECIFICATION $$
         "name": "Search ACME Services Documents",
         "description": "Search company documents, annual reports, and policies for strategic context and business information"
       }
+    },
+    {
+      "tool_spec": {
+        "type": "generic",
+        "name": "Send_Email",
+        "description": "Send emails to recipients with subject and HTML content. Always use HTML formatted content for emails.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "recipient": {
+              "description": "Email address of the recipient",
+              "type": "string"
+            },
+            "subject": {
+              "description": "Subject line of the email",
+              "type": "string"
+            },
+            "text": {
+              "description": "HTML content of the email",
+              "type": "string"
+            }
+          },
+          "required": [
+            "recipient",
+            "subject",
+            "text"
+          ]
+        }
+      }
     }
   ],
   "tool_resources": {
@@ -64,6 +94,26 @@ FROM SPECIFICATION $$
       "max_results": 5,
       "title_column": "TITLE",
       "id_column": "RELATIVE_PATH"
+    },
+    "Send_Email": {
+      "type": "procedure",
+      "identifier": "AGENT_TOOLS_CENTRAL.AGENT_TOOLS.SEND_MAIL",
+      "name": "SEND_MAIL(VARCHAR, VARCHAR, VARCHAR)",
+      "execution_environment": {
+        "type": "warehouse",
+        "warehouse": "HOL_WAREHOUSE",
+        "query_timeout": 0
+      }
+    },
+    "Web_scrape": {
+      "type": "procedure", 
+      "identifier": "AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE",
+      "name": "WEB_SCRAPE(VARCHAR)",
+      "execution_environment": {
+        "type": "warehouse",
+        "warehouse": "HOL_WAREHOUSE",
+        "query_timeout": 0
+      }
     }
   }
 }

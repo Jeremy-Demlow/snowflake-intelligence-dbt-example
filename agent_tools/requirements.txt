@@ -1,0 +1,20 @@
+# Core dependencies
+snowflake-snowpark-python>=1.11.1
+pydantic>=2.0.0
+toml>=0.10.2
+cryptography>=3.4.8
+
+# Testing dependencies
+pytest>=7.0.0
+pytest-mock>=3.10.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.21.0
+
+# Development dependencies
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+isort>=5.12.0
+
+# Optional email testing
+pytest-html>=3.1.0
