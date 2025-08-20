@@ -8,7 +8,6 @@ A comprehensive business intelligence demo showcasing **modern data stack archit
 - **Tool Integration**: Custom email and web scraping tools via Snowpark
 - **YAML-Driven Architecture**: Scalable agent configuration system
 - **Complete Pipeline**: Raw data → Analytics → Intelligence → Action
-- **Jeremy Howard Style**: Clean, modular, Unix philosophy design
 
 ## 🏗️ **Architecture Overview**
 
@@ -113,7 +112,7 @@ tools:
       identifier: "AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE"
 ```
 
-### Deploy Agents (Jeremy Howard Style)
+### Deploy Agents
 ```bash
 cd snowflake_agents
 
@@ -184,7 +183,7 @@ python validate_end_to_end.py
 python run_validation.py  # Quick validation tests
 ```
 
-## 🛠️ **Development Philosophy (Jeremy Howard Approved)**
+## 🛠️ **Development Philosophy**
 
 ### Unix Philosophy: Do One Thing Well
 - **`agent_tools/`**: Tool development and deployment (one responsibility)
@@ -249,4 +248,4 @@ default_execution_environment:
 
 🏢 **ACME Services** - *Your Trusted Partner for Snowflake Intelligence Demonstrations*
 
-*This demo showcases production-ready patterns for Snowflake Intelligence with custom tool integration, following Jeremy Howard's principles of clean, modular, and maintainable code.*
+*This demo showcases production-ready patterns for Snowflake Intelligence with custom tool integration*
