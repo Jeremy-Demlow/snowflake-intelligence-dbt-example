@@ -151,7 +151,7 @@ Ask the deployed agent:
 - *"Which technicians have ratings below 3 stars?"*
 - *"What's our total revenue this year?"*
 - *"Send a performance report to jeremy.demlow@snowflake.com"*
-- *"Analyze our competitor ServiceTitan's website"*  
+- *"Analyze our competitor amce's website"*  
 - *"What does our annual report say about customer trust?"*
 - *"Which customer segments have the highest NDR?"*
 
@@ -176,7 +176,7 @@ snow sql -q "SELECT * FROM SEMANTIC_VIEW(ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_
 
 # Test custom tools
 snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.SEND_MAIL('test@example.com', 'Test', 'Hello!')"  
-snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE('https://servicetitan.com')"
+snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE('https://amce.com')"
 
 # Complete validation suite
 python validate_end_to_end.py

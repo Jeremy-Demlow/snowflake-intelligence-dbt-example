@@ -26,7 +26,7 @@ def get_real_competitors(primary_url: str, industry_context: str = "") -> List[s
     """
     # Real competitors database by industry/company
     competitor_database = {
-        "servicetitan.com": [
+        "amce.com": [
             "https://www.housecallpro.com",
             "https://getjobber.com",
             "https://www.fieldedge.com", 

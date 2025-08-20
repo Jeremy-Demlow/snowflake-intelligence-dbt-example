@@ -227,7 +227,7 @@ snow snowpark deploy   # Deploys procedures
 snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.SEND_MAIL('test@example.com', 'Test', 'Hello!')"
 
 # Test web scraper  
-snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE('https://servicetitan.com')"
+snow sql -q "CALL AGENT_TOOLS_CENTRAL.AGENT_TOOLS.WEB_SCRAPE('https://amce.com')"
 ```
 
 ### 4. Update Agent Configuration
