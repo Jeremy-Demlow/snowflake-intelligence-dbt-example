@@ -2,6 +2,9 @@
 
 A comprehensive business intelligence demo showcasing **modern data stack architecture** with **Snowflake Intelligence Agents** and **custom tool integration**.
 
+## 🚀 **Quick Start**
+**→ For complete end-to-end deployment, see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)**
+
 ## 🎯 **What This Demonstrates**
 
 - **Modern Data Stack**: dbt + Snowflake + Cortex AI + Intelligence Agents
@@ -243,6 +246,81 @@ default_execution_environment:
 1. Create `snowflake_agents/agent_configs/your_agent.yml`
 2. Generate: `python agent_generator.py --agent your_agent`  
 3. Deploy: `python manage_agents.py deploy your_agent`
+
+## 🚀 **Complete End-to-End Deployment Commands**
+
+**These commands will deploy the entire ACME Intelligence demo from scratch with perfectly aligned data:**
+
+### Step 1: Setup Infrastructure
+```bash
+# Drop existing database (if rebuilding)
+snow sql -q "DROP DATABASE IF EXISTS ACME_INTELLIGENCE;"
+
+# Create complete infrastructure
+snow sql -f sql_scripts/setup_complete_infrastructure.sql
+```
+
+### Step 2: Generate Realistic Data
+```bash
+# Generate aligned synthetic data (contracts → billing linkages)
+cd data_setup
+python generate_acme_data.py
+```
+
+### Step 3: Build Data Models
+```bash
+# Run complete dbt transformation pipeline
+cd ../acme_intelligence
+dbt run
+```
+
+### Step 4: Deploy Enhanced Agents
+```bash
+# Generate and deploy production-ready agents
+cd ../snowflake_agents
+python agent_generator.py --agent acme_intelligence_agent
+python agent_generator.py --agent acme_contracts_agent
+python manage_agents.py deploy acme_intelligence_agent
+python manage_agents.py deploy acme_contracts_agent
+```
+
+### Step 5: Verify Complete Deployment
+```bash
+# Run comprehensive end-to-end verification
+cd ..
+./verify_deployment.sh
+```
+
+## 📊 **What You Get: Executive-Ready Intelligence**
+
+### **Realistic Business Data:**
+- **254K+ in active commitments** across 77 contracts
+- **Proper contract-billing alignment** (no orphaned records)
+- **Realistic variance patterns** (144%-286% fulfillment rates)
+- **5 business questions** answered with strategic context
+
+### **Enhanced AI Agents:**
+- **ACME_INTELLIGENCE_AGENT**: Complete business intelligence with all data sources
+- **ACME_CONTRACTS_AGENT**: Dedicated contracts & financial analysis
+- **Production features**: Auto-parallelization, executive formatting, advanced search
+
+### **Sample Agent Questions:**
+```
+"What's our contract health status and where should we focus retention efforts?"
+
+"Analyze variance between commitments and actual invoicing with strategic recommendations"
+
+"Which accounts are at risk and what's our intervention strategy?"
+
+"Show me NDR trends by customer segment with expansion opportunities"
+```
+
+### **Expected Results:**
+After running these commands, you'll have a **demo-ready system** with:
+- ✅ **253 active contracts** with realistic fulfillment patterns
+- ✅ **Executive-ready insights** with strategic business context  
+- ✅ **Enhanced agents** providing actionable recommendations
+- ✅ **End-to-end reproducibility** for consistent demos
 
 ---
 

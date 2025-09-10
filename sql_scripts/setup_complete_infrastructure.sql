@@ -176,6 +176,161 @@ CREATE OR REPLACE TABLE BILLING_METRICS (
 ) COMMENT = 'Monthly ARR data for NDR calculations';
 
 -- ========================================
+-- FINANCIAL CONTRACT & INVOICE TABLES (NEW)
+-- ========================================
+
+-- Product Catalog (50 ACME Platform products)
+CREATE OR REPLACE TABLE PRODUCTS (
+    id STRING PRIMARY KEY,
+    name STRING NOT NULL,
+    product_code STRING,
+    product_category_c STRING,
+    acme_product_code_c NUMBER,
+    family STRING,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_date TIMESTAMP,
+    unit_price NUMBER(10,2)
+) COMMENT = 'ACME Platform product catalog for contract analysis';
+
+-- Extended SFDC Accounts  
+CREATE OR REPLACE TABLE ACCOUNTS (
+    id STRING PRIMARY KEY,
+    tenant_id_c NUMBER,
+    tenant_name_c STRING,
+    name STRING NOT NULL,
+    parent_id STRING,
+    customer_status_picklist_c STRING,
+    billing_enabled_c STRING,
+    billing_comparison_status_c STRING,
+    data_validated_c BOOLEAN,
+    test_account_c BOOLEAN,
+    product_billed_in_sf_c BOOLEAN,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_date DATE,
+    industry STRING
+) COMMENT = 'Extended SFDC account data for sales pipeline';
+
+-- Sales Pipeline: Opportunities → Contracts → Orders → Order Items
+CREATE OR REPLACE TABLE OPPORTUNITIES (
+    id STRING PRIMARY KEY,
+    account_id STRING NOT NULL,
+    name STRING NOT NULL,
+    stage_name STRING,
+    amount NUMBER(12,2),
+    close_date DATE,
+    created_date DATE,
+    is_won BOOLEAN,
+    is_closed BOOLEAN,
+    probability NUMBER(3,0)
+) COMMENT = 'Sales opportunities feeding contract pipeline';
+
+CREATE OR REPLACE TABLE CONTRACTS (
+    id STRING PRIMARY KEY,
+    account_id STRING NOT NULL,
+    opportunity_id STRING,
+    status STRING,
+    start_date DATE,
+    end_date DATE,
+    term NUMBER,
+    created_date DATE
+) COMMENT = 'Sales contracts - answers business question 1 (active contracts)';
+
+CREATE OR REPLACE TABLE ORDERS (
+    id STRING PRIMARY KEY,
+    contract_id STRING NOT NULL,
+    account_id STRING NOT NULL,
+    opportunity_id STRING,
+    status STRING,
+    type STRING,
+    order_number STRING,
+    created_date DATE,
+    activated_date DATE,
+    master_order_c STRING,
+    is_master_order_c BOOLEAN,
+    has_child_orders BOOLEAN,
+    is_migrated_c BOOLEAN
+) COMMENT = 'Sales orders with amendment/renewal tracking';
+
+CREATE OR REPLACE TABLE ORDER_ITEMS (
+    id STRING PRIMARY KEY,
+    order_id STRING NOT NULL,
+    contract_id STRING NOT NULL,
+    product_id STRING NOT NULL,
+    product_code STRING,
+    quantity NUMBER,
+    unit_price NUMBER(10,2),
+    total_price NUMBER(12,2),
+    min_committed_quantity NUMBER,
+    total_min_commitment NUMBER(12,2),
+    start_date DATE,
+    end_date DATE,
+    billing_day_of_month NUMBER,
+    created_date DATE,
+    is_exit_ramp BOOLEAN,
+    exit_ramp_c BOOLEAN,
+    product_family STRING
+) COMMENT = 'Order line items - answers business questions 2,4,5 (commitments, variance, exit ramps)';
+
+-- Dual Billing Systems: SFDC + ACME Platform
+CREATE OR REPLACE TABLE INVOICES (
+    id STRING,
+    blng_account_c STRING,
+    blng_invoice_date_c DATE,
+    blng_total_amount_c NUMBER(12,2),
+    blng_tax_amount_c NUMBER(12,2),
+    blng_invoice_status_c STRING,
+    blng_payment_status_c STRING,
+    invoice_long_description_c TEXT,
+    is_deleted BOOLEAN,
+    blng_invoice_c STRING,
+    blng_product_c STRING,
+    blng_unit_price_c NUMBER(10,2),
+    blng_quantity_c NUMBER,
+    blng_subtotal_c NUMBER(12,2),
+    blng_start_date_c DATE,
+    blng_end_date_c DATE,
+    contract_id STRING
+) COMMENT = 'SFDC billing invoices for commitment vs invoiced analysis';
+
+CREATE OR REPLACE TABLE ACME_BILLING_DATA (
+    _tenant_id NUMBER,
+    _tenant_name STRING,
+    id STRING,
+    trans_date DATE,
+    description STRING,
+    amount NUMBER(12,2),
+    tax NUMBER(12,2),
+    type NUMBER,
+    balancetype NUMBER,
+    active BOOLEAN,
+    isexported BOOLEAN,
+    invoice_id STRING,
+    sku NUMBER,
+    itemprice NUMBER(10,2),
+    quantity NUMBER,
+    account_id STRING,
+    contract_id STRING
+) COMMENT = 'ACME Platform billing data for dual billing analysis';
+
+-- Account Mapping for Enterprise Relationships
+CREATE OR REPLACE TABLE PARENT_CHILD_MAPPING (
+    snapshot_date DATE,
+    tenant_account_id STRING,
+    parent_account_name_current STRING,
+    parent_tenant_id_current STRING,
+    parent_child_flag STRING,
+    fpa_parent_id STRING
+) COMMENT = 'Parent-child account mapping for enterprise churn analysis';
+
+CREATE OR REPLACE TABLE TENANT_SFDC_MAPPING (
+    tenant_id NUMBER,
+    sfdc_account_id STRING,
+    id_valid_from DATE,
+    id_valid_to DATE
+) COMMENT = 'Tenant ID to Salesforce Account ID mapping';
+
+-- ========================================
 -- 5. GRANT PERMISSIONS ON TABLES
 -- ========================================
 

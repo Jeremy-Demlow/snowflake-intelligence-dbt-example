@@ -38,16 +38,3 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION acme_team_email_int
 -- To use the new integration, update sender.py line 20:
 -- Change 'ai_email_int' to 'acme_team_email_int'
 */
-
-/*
-Future Team Management:
-======================
-To add more team members later, run:
-
-ALTER NOTIFICATION INTEGRATION ai_email_int 
-SET ALLOWED_RECIPIENTS = (
-    'jeremy.demlow@snowflake.com', 
-    'sean.guillen@snowflake.com',
-    'new.teammate@snowflake.com'
-);
-*/

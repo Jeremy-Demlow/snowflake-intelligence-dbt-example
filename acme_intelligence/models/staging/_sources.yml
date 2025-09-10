@@ -191,3 +191,29 @@ sources:
             description: Last 3 months ARR amount
             tests:
               - not_null
+
+      # Financial data tables
+      - name: contracts
+        description: Customer contracts and agreements
+      - name: orders
+        description: Sales orders from Salesforce  
+      - name: order_items
+        description: Individual line items within orders
+      - name: invoices
+        description: Billing invoices from Salesforce
+      - name: products
+        description: Product catalog and pricing
+      - name: accounts
+        description: Customer accounts from Salesforce
+      
+      # ACME platform data
+      - name: acme_billing_data
+        description: Billing transactions from ACME platform
+      - name: parent_child_mapping
+        description: Parent-child account relationships
+      - name: tenant_sfdc_mapping
+        description: Mapping between tenant IDs and SFDC account IDs
+      
+      # Document data
+      - name: stg_parsed_documents
+        description: Parsed document content for search
