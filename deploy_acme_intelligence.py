@@ -43,10 +43,11 @@ def main():
     if not run_command("snow sql -f sql_scripts/setup_complete_infrastructure.sql", "Creating database, schemas, tables, and roles"):
         sys.exit(1)
     
-    # Step 2: Generate Sample Data
+    # Step 2: Generate Sample Data  
     print("\n📋 STEP 2: Generating Sample Data")
-    if not run_command("cd data_setup && conda run -n acme python generate_acme_data.py", "Generating and loading sample data"):
-        sys.exit(1)
+    if not run_command("cd data_setup && conda activate service_titan && python generate_acme_data.py", "Generating and loading sample data"):
+        print("⚠️  Data generation failed, but infrastructure is ready")
+        print("📋 You can retry with: cd data_setup && python generate_acme_data.py")
     
     # Step 3: Upload Document to Stage
     print("\n📋 STEP 3: Uploading Documents")
