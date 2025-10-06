@@ -1,0 +1,80 @@
+HVAC SYSTEM INSTALLATION MANUAL
+===============================
+Document ID: HVAC-INST-2024-V2.1
+Last Updated: March 2024
+
+OVERVIEW
+--------
+This manual provides step-by-step procedures for installing residential and light commercial HVAC systems. All installations must comply with local codes and manufacturer specifications.
+
+PRE-INSTALLATION CHECKLIST
+--------------------------
+□ Building permits obtained and approved
+□ Load calculations completed and verified
+□ Equipment delivery confirmed (indoor/outdoor units)
+□ Site inspection completed for:
+  - Adequate clearances
+  - Proper electrical supply
+  - Gas line connections (if applicable)
+  - Condensate drain access
+  - Ductwork routing
+
+INDOOR UNIT INSTALLATION
+------------------------
+1. LOCATION REQUIREMENTS:
+   - Minimum 24" service clearance on control side
+   - Level platform or suspended properly  
+   - Away from high-traffic areas
+   - Access to electrical supply and drain
+
+2. MOUNTING PROCEDURES:
+   - Use vibration isolators for all connections
+   - Secure to structural members (16" o.c. minimum)
+   - Ensure proper refrigerant line routing
+   - Install service disconnect within sight
+
+3. ELECTRICAL CONNECTIONS:
+   - Verify voltage matches unit nameplate
+   - Use copper wire rated for temperature
+   - Install dedicated circuit with proper overcurrent protection
+   - Ground all components per NEC requirements
+
+OUTDOOR UNIT INSTALLATION  
+-------------------------
+1. PAD PREPARATION:
+   - Level concrete pad (4" minimum thickness)
+   - Proper drainage away from unit
+   - Minimum clearances: 30" service side, 12" other sides
+   - 60" minimum clearance above unit
+
+2. REFRIGERANT LINE INSTALLATION:
+   - Use ACR copper tubing only
+   - Properly insulate suction line
+   - Support every 6-8 feet
+   - Nitrogen purge during brazing
+   - Pressure test before charging
+
+3. START-UP PROCEDURES:
+   - Verify all connections tight
+   - Check refrigerant charge using superheat/subcooling
+   - Test all safety controls
+   - Verify proper airflow (CFM measurements)
+   - Document all settings and pressures
+
+COMMISSIONING CHECKLIST
+-----------------------
+□ System operates in all modes (heat/cool/fan)
+□ Temperatures within design parameters
+□ No unusual noises or vibrations  
+□ Customer walkthrough completed
+□ Warranty registration submitted
+□ Service schedule explained to customer
+
+TROUBLESHOOTING COMMON ISSUES
+-----------------------------
+• Low airflow: Check filter, ductwork restrictions
+• Short cycling: Verify charge, check controls
+• High operating pressures: Check condenser coil, fan operation
+• Customer complaints about comfort: Verify load calculations
+
+All installations require final inspection and customer sign-off before completion.

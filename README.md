@@ -138,25 +138,33 @@ python manage_agents.py deploy acme_intelligence_agent_dev
 - **Business Metrics**: $195,768 total revenue, 4.04 avg satisfaction
 
 ### Intelligence Components
-- **Semantic Views**: Operational & financial analytics for Cortex Analyst
+- **Semantic Views**: Operational, financial & performance analytics for Cortex Analyst
 - **Cortex Search**: `acme_document_search` for document retrieval  
-- **AI Agent**: Full business analyst with custom tools
+- **AI Agents**: Business intelligence + Performance optimization agents with custom tools
 - **Custom Tools**: Email sender + AI-powered web scraper
 
-### Data Pipeline (dbt) - 15 Models
+### Data Pipeline (dbt) - 16 Models
 - **Staging (8)**: Clean, typed source data
 - **Marts (4)**: Business logic and fact tables  
-- **Semantic (3)**: Intelligence-ready analytics with NDR calculations
+- **Semantic (4)**: Intelligence-ready analytics with NDR calculations + Performance analytics
 
 ## 🧪 **Sample Business Questions**
 
-Ask the deployed agent:
+### ACME Intelligence Agent:
 - *"Which technicians have ratings below 3 stars?"*
 - *"What's our total revenue this year?"*
 - *"Send a performance report to jeremy.demlow@snowflake.com"*
 - *"Analyze our competitor amce's website"*  
 - *"What does our annual report say about customer trust?"*
 - *"Which customer segments have the highest NDR?"*
+
+### Data Engineer Assistant:
+- *"What are my slowest queries and how can I optimize them?"*
+- *"Which warehouses are consuming the most credits?"*
+- *"Show me cost optimization opportunities with projected savings"*
+- *"What compilation errors am I seeing and how do I fix them?"*
+- *"Recommend Gen 2 warehouse upgrades for better performance"*
+- *"Analyze my query performance trends over the last month"*
 
 ## 👥 **User Access Management**
 

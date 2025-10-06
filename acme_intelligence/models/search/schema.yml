@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: search_documents
+    description: |
+      Search-optimized document model that creates and maintains the Cortex Search service.
+      
+      This model:
+      - References parsed documents from stg_parsed_documents
+      - Applies search-specific filtering and optimization
+      - Automatically creates/updates the ACME_DOCUMENT_SEARCH Cortex Search service via post-hook
+      
+      Architecture Benefits:
+      - Separates document parsing from search indexing
+      - Eliminates complex post-hook debugging in parsing model
+      - Allows independent testing of parsing vs search functionality
+      - Clean dependency: stg_parsed_documents → search_documents → Cortex Search
+      
+      Usage:
+      - Run `dbt run --select stg_parsed_documents` to parse documents only
+      - Run `dbt run --select search_documents` to create/update search service
+      - Run `dbt run --select +search_documents` to do both in sequence
+      
+    columns:
+      - name: relative_path
+        description: File path relative to the stage
+        tests:
+          - unique
+          - not_null
+      
+      - name: title
+        description: Human-readable document title extracted from filename
+        
+      - name: document_type
+        description: |
+          Automatically classified document type:
+          - annual_report: Company annual reports
+          - policy: Safety policies and compliance documents  
+          - manual: Technical manuals and installation guides
+          - training: Employee training and onboarding materials
+          - standards: Service standards and customer guidelines
+          - contract: Legal contracts and agreements
+          - financial: Invoices and billing documents
+          - document: Generic/unclassified documents
+          
+      - name: content
+        description: |
+          AI-parsed document content extracted using Snowflake AI_PARSE_DOCUMENT.
+          Preserves:
+          - Document structure (headers, tables, lists)
+          - Markdown formatting for better searchability
+          - Reading order and layout context
+          
+      - name: content_length
+        description: Character count of extracted content
+        
+      - name: file_size
+        description: Original file size in bytes
+        
+      - name: page_count
+        description: Number of pages in the original document (from AI_PARSE_DOCUMENT metadata)

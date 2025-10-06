@@ -1,0 +1,9 @@
+# Core dependencies (minimal)
+requests>=2.31.0
+
+# Slack integration (optional - core bot works without it)
+slack-bolt>=1.18.0
+
+# For notebook development (optional)
+jupyter>=1.0.0
+ipykernel>=6.0.0

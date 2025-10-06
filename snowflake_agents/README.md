@@ -157,6 +157,15 @@ Agents **consume** these resources but are managed separately for operational fl
   - Documents: `ACME_INTELLIGENCE.SEARCH.acme_document_search`
 - **Deployment**: `SNOWFLAKE_INTELLIGENCE.AGENTS.acme_contracts_agent`
 
+### Data Engineer Assistant
+- **Purpose**: Query performance optimization, cost reduction, and proactive performance monitoring
+- **Tools**: Usage Analytics + Document Search + Performance Reporting
+- **Data Sources**:
+  - Performance: `ACME_INTELLIGENCE.SEMANTIC_MODELS.snowflake_usage_analytics_view` (85+ columns)
+  - Account Usage: `SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY` + `QUERY_ATTRIBUTION_HISTORY`
+  - Documents: `ACME_INTELLIGENCE.SEARCH.acme_document_search`
+- **Deployment**: `SNOWFLAKE_INTELLIGENCE.AGENTS.data_engineer_assistant`
+
 ## Business Questions Supported
 
 ### Contract Intelligence (Enhanced):
@@ -169,6 +178,14 @@ Agents **consume** these resources but are managed separately for operational fl
 - "What is our comprehensive business health across operations, finance, and contracts?"
 - "Analyze the relationship between technician ratings, contract performance, and financial outcomes"
 - "Which customer segments have the highest ARR expansion potential and operational capacity?"
+
+### Performance Optimization (Data Engineer Assistant):
+- "What are my slowest queries and how can I optimize them?"
+- "Which warehouses are consuming the most credits and need right-sizing?"
+- "Show me cost optimization opportunities with projected savings"
+- "What compilation errors am I seeing and how do I fix them?"
+- "Recommend Gen 2 warehouse upgrades with performance benefits"
+- "Analyze query performance trends and identify bottlenecks"
 
 ### Key Metrics Available:
 - **Active Contracts**: 80 contracts

@@ -1,9 +1,6 @@
 {{
     config(
-        materialized='table',
-        post_hook=[
-            "{{ create_cortex_search_service() }}"
-        ]
+        materialized='table'
     )
 }}
 

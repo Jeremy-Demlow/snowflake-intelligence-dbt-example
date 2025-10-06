@@ -1,0 +1,77 @@
+display_information:
+  name: ACME Intelligence Bot
+  description: Natural-language business intelligence powered by Snowflake Cortex Agents
+  background_color: "#29B5E8"
+  long_description: |
+    *ACME Intelligence Bot* brings enterprise AI directly into Slack.
+    
+    Ask any business question in plain English and get:
+    • Comprehensive analysis across operational, financial, and contract data
+    • Real-time insights from Snowflake Intelligence agents
+    • Executive-ready answers with strategic context
+    • Automatic semantic model selection and tool orchestration
+    
+    Powered by Snowflake Cortex Agents with enterprise-grade security.
+
+features:
+  bot_user:
+    display_name: ACME Intelligence Bot
+    always_online: true
+  
+  slash_commands:
+    - command: /ask-acme
+      description: Ask the ACME Intelligence Agent any business question
+      usage_hint: How many customers do we have?
+      should_escape: false
+    
+    - command: /contracts
+      description: Analyze contracts, churn risk, and renewals
+      usage_hint: Which contracts are at risk of churn?
+      should_escape: false
+    
+    - command: /perf
+      description: Query performance analysis and optimization
+      usage_hint: What are the slowest queries today?
+      should_escape: false
+
+oauth_config:
+  scopes:
+    user:
+      - chat:write
+    bot:
+      - app_mentions:read
+      - channels:history
+      - channels:manage
+      - channels:read
+      - chat:write
+      - chat:write.public
+      - chat:write.customize
+      - commands
+      - files:read
+      - files:write
+      - groups:history
+      - groups:read
+      - groups:write
+      - im:history
+      - im:read
+      - im:write
+      - mpim:history
+      - mpim:read
+      - mpim:write
+      - users:read
+
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - message.channels
+      - message.groups
+      - message.im
+      - message.mpim
+  
+  interactivity:
+    is_enabled: true
+  
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false

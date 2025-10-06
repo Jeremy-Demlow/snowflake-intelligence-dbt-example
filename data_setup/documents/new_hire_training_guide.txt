@@ -1,0 +1,167 @@
+ACME SERVICES NEW HIRE TRAINING GUIDE
+=====================================
+Document Version: 2024.1
+Target Audience: New Technicians (0-90 days)
+
+WELCOME TO ACME SERVICES
+------------------------
+Congratulations on joining the ACME Services family! This comprehensive training guide will help you succeed in your first 90 days and beyond.
+
+WEEK 1: ORIENTATION & SAFETY
+-----------------------------
+
+DAY 1-2: COMPANY OVERVIEW
+• Company history and mission
+• Organizational structure
+• Benefits enrollment and HR policies
+• IT setup (laptop, mobile device, credentials)
+• Uniform fitting and PPE distribution
+
+DAY 3-5: SAFETY TRAINING
+• OSHA 10-hour certification
+• Ladder safety and fall protection
+• Electrical safety basics
+• Chemical handling procedures
+• Emergency response protocols
+• Vehicle safety and driving record review
+
+WEEK 2-3: TECHNICAL FUNDAMENTALS
+--------------------------------
+
+HVAC BASICS:
+• Refrigeration cycle theory
+• Electrical fundamentals (AC/DC, Ohm's Law)
+• Psychrometrics and comfort conditions
+• Common tools and test equipment
+• Reading schematics and wiring diagrams
+
+PLUMBING FUNDAMENTALS:
+• Water supply and drainage systems
+• Pipe materials and joining methods
+• Fixture installation procedures
+• Code compliance basics
+• Leak detection techniques
+
+CUSTOMER INTERACTION SKILLS:
+• Professional communication
+• Explaining technical issues to customers
+• Upselling and service recommendations
+• Handling difficult situations
+• Using tablets/mobile apps for estimates
+
+WEEK 4-6: HANDS-ON TRAINING
+---------------------------
+
+FIELD SHADOWING:
+• Accompany experienced technician on calls
+• Observe customer interactions
+• Practice using diagnostic equipment
+• Learn route optimization and scheduling
+• Understand invoicing and payment processing
+
+PRACTICAL EXERCISES:
+• Basic maintenance tasks (filter changes, cleaning)
+• Simple repairs under supervision  
+• Equipment startup and commissioning
+• Safety protocol demonstrations
+• Customer presentation practice
+
+WEEK 7-12: INDEPENDENT WORK
+---------------------------
+
+SUPERVISED INDEPENDENCE:
+• Handle straightforward service calls alone
+• Daily check-ins with supervisor
+• Weekly performance reviews
+• Skill development focus areas
+• Customer feedback incorporation
+
+CERTIFICATION PREPARATION:
+• EPA 608 certification (HVAC techs)
+• State licensing requirements
+• Manufacturer-specific training
+• Continuing education planning
+• Professional development goals
+
+PERFORMANCE METRICS
+-------------------
+
+FIRST 30 DAYS:
+• Complete all required training modules
+• Pass safety certification exam (80% minimum)
+• Shadow minimum 40 service calls
+• Customer satisfaction >4.0/5.0 rating
+
+FIRST 60 DAYS:  
+• Independent completion of basic service calls
+• Achieve 85% first-call resolution rate
+• Maintain safety record (zero incidents)
+• Upsell rate >15% on applicable calls
+
+FIRST 90 DAYS:
+• Handle complex installations with minimal supervision
+• Customer satisfaction >4.2/5.0 rating  
+• Route efficiency >90% of target
+• Complete advanced technical training
+
+RESOURCES AND SUPPORT
+---------------------
+
+LEARNING MANAGEMENT SYSTEM:
+• Access online training modules 24/7
+• Track progress and completion status
+• Download reference materials
+• Submit training questions
+
+MENTORSHIP PROGRAM:
+• Assigned senior technician mentor
+• Weekly one-on-one meetings
+• Career development discussions
+• Technical skill building
+
+KNOWLEDGE BASE:
+• Searchable database of solutions
+• Video demonstrations
+• Manufacturer documentation
+• Troubleshooting flowcharts
+
+COMMON FIRST-90-DAY CHALLENGES
+------------------------------
+
+TIME MANAGEMENT:
+• Balancing speed with quality
+• Efficient routing and scheduling
+• Proper documentation habits
+• Customer communication timing
+
+TECHNICAL SKILLS:
+• Equipment unfamiliarity  
+• Complex diagnostic procedures
+• Code compliance questions
+• Tool usage proficiency
+
+CUSTOMER RELATIONS:
+• Building rapport quickly
+• Explaining technical concepts clearly
+• Handling price objections
+• Managing expectations
+
+SUCCESS TIPS FROM VETERAN TECHNICIANS
+-------------------------------------
+"Always carry spare parts for common failures. Nothing impresses customers more than fixing their problem on the first visit." - Tom Martinez (8 years)
+
+"Take photos before and after every job. It protects you and helps customers understand the value of your work." - Lisa Chen (12 years)  
+
+"Never stop learning. Technology changes fast in this industry, and continuous education keeps you valuable." - David Williams (15 years)
+
+CAREER ADVANCEMENT OPPORTUNITIES
+--------------------------------
+• Lead Technician (2-3 years experience)
+• Specialist roles (Commercial, Residential, Emergency)
+• Training and Development positions
+• Field Supervisor and Management tracks
+• Technical Sales and Customer Success roles
+
+Questions? Contact your supervisor or the Training Department at training@acmeservices.com
+
+Welcome aboard – we're excited to have you on the team!
