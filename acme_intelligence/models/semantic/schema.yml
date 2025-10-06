@@ -15,6 +15,24 @@ models:
       
     # Note: Semantic views don't have traditional columns like regular tables
     # Instead, they define logical business entities (tables), relationships, facts, dimensions, and metrics
+
+  - name: snowflake_usage_semantic_view
+    description: "Comprehensive Snowflake usage analytics semantic view for the Data Engineer Assistant, combining QUERY_ATTRIBUTION_HISTORY and QUERY_HISTORY with all 85+ columns for complete query performance analysis, cost optimization, and warehouse utilization insights."
+    
+    meta:
+      semantic_view: true
+      cortex_analyst_enabled: true
+      business_domain: snowflake_performance_analytics
+      deployment_methods:
+        - "dbt run --select snowflake_usage_semantic_view (recommended)"
+        - "dbt compile && snow sql -f target/compiled/..."
+      
+    # Note: This semantic view provides comprehensive query performance analytics including:
+    # - Query execution times, compilation times, and performance bottlenecks
+    # - Warehouse utilization patterns and credit consumption analysis
+    # - User and workload analysis for capacity planning
+    # - Error analysis and compilation issue identification
+    # - Cost analysis by warehouse, user, and query type
         
   - name: stg_parsed_documents
     description: "Parsed documents from stage for Cortex Search"

@@ -1,0 +1,55 @@
+ACME SERVICES SAFETY POLICY
+============================
+Effective Date: January 1, 2024
+Document Version: 3.2
+
+EXECUTIVE SUMMARY
+----------------
+Safety is our top priority at ACME Services. This comprehensive policy outlines mandatory safety procedures for all field service technicians working on HVAC, plumbing, electrical, and roofing installations.
+
+PERSONAL PROTECTIVE EQUIPMENT (PPE)
+-----------------------------------
+All technicians must wear appropriate PPE:
+• Safety glasses with side shields
+• Hard hats in construction zones  
+• Steel-toed boots rated for electrical hazards
+• High-visibility vests when working near traffic
+• Cut-resistant gloves for metal handling
+
+ELECTRICAL SAFETY PROTOCOLS
+---------------------------
+Before any electrical work:
+1. Verify power is OFF using a non-contact voltage tester
+2. Lock out/Tag out (LOTO) all energy sources
+3. Test the tester on known live circuit
+4. Use insulated tools rated for voltage level
+5. Never work alone on high-voltage systems (>240V)
+
+Fall protection required for work above 6 feet.
+
+CHEMICAL HAZARD MANAGEMENT
+-------------------------
+• All technicians must complete annual HAZMAT training
+• MSDS sheets available in service vehicles
+• Eye wash stations required for refrigerant handling
+• Proper ventilation when using solvents or adhesives
+
+INCIDENT REPORTING
+-----------------
+All accidents, near-misses, and safety violations must be reported within 24 hours via the ACME Services mobile app. Supervisors will investigate and implement corrective actions.
+
+TRAINING REQUIREMENTS
+--------------------
+• Annual safety refresher (8 hours)
+• Equipment-specific training before using new tools
+• CPR/First Aid certification required
+• Monthly safety meetings with team leads
+
+NON-COMPLIANCE CONSEQUENCES
+--------------------------
+Safety violations result in:
+1st offense: Written warning and retraining
+2nd offense: 3-day suspension without pay  
+3rd offense: Termination
+
+Contact the Safety Department at safety@acmeservices.com for questions.
