@@ -130,4 +130,5 @@ experiments/
 # data/
 # sample_data
 slack_bot/testing_ground/*
+slack_bot/notes_to_self.md
 

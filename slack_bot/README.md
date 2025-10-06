@@ -12,14 +12,15 @@ print(ask("How many customers do we have?"))
 # → "Based on our financial metrics data, we currently have 14 customers..."
 ```
 
-## Why Simple?
+## Features
 
-This bot leverages **Snowflake's Intelligence layers** to handle all complexity:
-- ✅ One API call to Snowflake Cortex Agents
-- ✅ Snowflake's orchestration picks the right semantic models
-- ✅ Automatic tool selection (Cortex Analyst, Cortex Search)
-- ✅ ~150 lines of actual code
-- ✅ Easy to understand and extend
+- ✅ **Multi-turn conversations** - Ask follow-up questions with full context
+- ✅ **SQL transparency** - See the generated queries
+- ✅ **Smart progress updates** - Know what's happening without spam
+- ✅ **Clean formatting** - Optimized for Slack readability
+- ✅ **Response timing** - See how long queries take
+- ✅ **Three slash commands** - `/ask-acme`, `/contracts`, `/perf`
+- ✅ **Works with @mentions** - Natural conversation in threads
 
 ## Architecture
 
@@ -74,15 +75,26 @@ export SLACK_BOT_TOKEN="xoxb-your-bot-token"
 export SLACK_APP_TOKEN="xapp-your-app-token"
 ```
 
-### 3. Create Slack App (One-Time)
+### 3. Create Slack App (One-Time Setup)
+
+**Use the manifest for instant setup:**
 
 1. Go to https://api.slack.com/apps
 2. Click **"Create New App"** → **"From an app manifest"**
-3. Choose your workspace
+3. Choose your workspace (e.g., TESTWORKSPACE)
 4. Select **YAML** format
-5. Paste contents of `slack_app_manifest.yml`
-6. Click **"Create"**
-7. Get your tokens from the app settings
+5. Copy and paste the entire contents of `slack_app_manifest.yml`
+6. Click **"Next"** → **"Create"**
+
+**Get your tokens:**
+- **Bot Token**: OAuth & Permissions → Install to Workspace → Copy "Bot User OAuth Token"
+- **App Token**: Basic Information → App-Level Tokens → Copy token (or generate with `connections:write` scope)
+
+**The manifest automatically configures:**
+- All 3 slash commands (`/ask-acme`, `/contracts`, `/perf`)
+- Socket Mode for easy development
+- All required bot permissions
+- Event subscriptions for @mentions and DMs
 
 ### 4. Test Before Running
 
@@ -98,202 +110,176 @@ python simple_bot.py
 
 ## Usage
 
-### Interactive Testing (Recommended to start)
+### Slack Commands
 
-```bash
-jupyter notebook quick_start.ipynb
+**Slash Commands** (start a new thread):
+```
+/ask-acme How many customers do we have?
+/contracts Which contracts are at risk?
+/perf What are the slowest queries today?
 ```
 
-Test questions interactively and see real responses from your Snowflake agents.
+**Follow-up Questions** (in threads):
+```
+@ACME Intelligence Bot Who are those customers?
+@ACME Intelligence Bot Which one has highest revenue?
+```
 
-### Python Module
+**You'll see:**
+- Question posted visibly
+- Smart progress updates (every 5s + key milestones)
+- Clean answer with proper Slack formatting
+- SQL query in code block
+- Response timing and tools used
+- Tip about asking follow-ups
+
+### Python Module (Without Slack)
 
 ```python
 from simple_bot import ask
 
-# Business intelligence
+# Just ask questions
 answer = ask("What's our revenue this quarter?")
-
-# Contract analysis
-answer = ask("Which contracts need attention?") 
-
-# Performance analysis
+answer = ask("Which contracts need attention?")
 answer = ask("Show me slow queries from today")
-```
-
-### Slack Bot (Production)
-
-```bash
-export SNOWFLAKE_ACCOUNT="your-account"
-export SNOWFLAKE_PAT="your-pat-token"
-export SLACK_BOT_TOKEN="xoxb-..."
-export SLACK_APP_TOKEN="xapp-..."
-
-python simple_bot.py
 ```
 
 ## Testing
 
-### Test Core Functionality
+### Health Check
+```bash
+python test_bot.py  # Verifies imports, config, dependencies
+```
 
+### Test API Directly
 ```bash
 cd testing_ground
-
-# Test with real agent
 export SNOWFLAKE_PAT="your-token"
-python test_with_pat.py
+python test_with_pat.py  # Calls real agent, shows streaming events
 ```
 
-This calls your real Snowflake Cortex Agent and captures the streaming response.
-
-## Design Philosophy
-
-### Single Agent Approach
-
-This bot uses **one primary agent** (`ACME_INTELLIGENCE_AGENT`) for all questions. The agent automatically:
-
-- Selects from multiple semantic models (Operational, Financial, Contracts)
-- Chooses the right tool (Cortex Analyst for SQL, Cortex Search for documents)
-- Generates and executes queries
-- Formats executive-ready responses
-
-**Result:** Snowflake's orchestration layer handles the intelligence, we just call the API.
-
-### Tested Capabilities
-
-```python
-ask("What is our total revenue?")        # → "$208,046.73 across 25 technicians"
-ask("How many customers do we have?")    # → "14 customers in total"
-ask("How many active contracts?")        # → "77 active contracts"
+### Interactive Testing
+```bash
+jupyter notebook quick_start.ipynb  # Test without Slack
 ```
 
-All answered by the same agent, using different semantic models automatically.
+## How It Works
 
-## API Details
+### Multi-Turn Conversations
 
-### Snowflake Agent Object API
+The bot maintains conversation context so you can ask follow-ups:
 
-**Endpoint:**
+```
+You: /ask-acme How many customers do we have?
+Bot: Based on our financial data, we have 14 customers...
+     [Shows SQL and timing]
+
+You: @bot Who are those customers?  (in the thread)
+Bot: Our 14 customers are:
+     1. PARENT_001
+     2. PARENT_002
+     ...
+     [Shows SQL and timing]
+
+You: @bot Which one has highest revenue?  (in the thread)
+Bot: PARENT_005 with $30.7M ARR...
+```
+
+The agent **remembers the context** from previous questions!
+
+### What You See
+
+**Question Posted:**
+```
+@User asked:
+How many customers do we have?
+```
+
+**Progress (every 5s + milestones):**
+```
+🤔 Analyzing...
+🧠 Planning the next steps...
+⚡ Executing SQL...
+✨ Generating SQL...
+```
+
+**Answer with Metadata:**
+```
+Based on our financial data, we have *14 customers* in total.
+
+```sql
+SELECT COUNT(DISTINCT ndr_parent)...
+```
+
+⏱️ 15.7s • Tools: cortex_analyst_text_to_sql
+
+💡 Tip: Ask follow-ups by @mentioning me in this thread
+```
+
+## Technical Details
+
+### Available Agents
+
+- **ACME_INTELLIGENCE_AGENT** - Main agent with access to all semantic models
+- **ACME_CONTRACTS_AGENT** - Specialized for contract analysis
+- **DATA_ENGINEER_ASSISTANT** - Query performance optimization
+
+**Pro tip:** The intelligence agent can handle most questions since it has access to all data!
+
+### API Endpoint
 ```
 POST https://{account}.snowflakecomputing.com/api/v2/databases/SNOWFLAKE_INTELLIGENCE/schemas/AGENTS/agents/{agent_name}:run
 ```
 
-**Authentication:**
-```python
-headers = {
-    "Authorization": f"Bearer {PAT_TOKEN}",
-    "X-Snowflake-Authorization-Token-Type": "PROGRAMMATIC_ACCESS_TOKEN",
-}
-```
-
-**Request:**
+### Multi-Turn Implementation
+Conversation history is passed in the `messages` array:
 ```json
 {
-  "messages": [{
-    "role": "user",
-    "content": [{"type": "text", "text": "Your question here"}]
-  }]
+  "messages": [
+    {"role": "user", "content": [{"text": "How many customers?"}]},
+    {"role": "assistant", "content": [{"text": "14 customers"}]},
+    {"role": "user", "content": [{"text": "Who are they?"}]}
+  ]
 }
 ```
 
-**Response:** Server-Sent Events stream with:
-- `response.status` - Planning updates
-- `response.thinking.delta` - Reasoning tokens
-- `response.tool_use` - Tool invocations  
-- `response.text.delta` - Answer tokens
-- `response` - Final aggregated response
+The agent uses this history to understand context like "they" refers to the "14 customers" from before.
 
-See `testing_ground/examples.md` for real response examples.
+## Troubleshooting
 
-## Extending the Bot
+### Bot doesn't respond
+1. Check logs in terminal where bot is running
+2. Verify environment variables are set
+3. Run `python test_bot.py` to check health
 
-The simple design makes extensions easy:
+### "dispatch_failed" error
+- Bot took too long to acknowledge
+- Already fixed with immediate `ack()` call
 
-### Add Logging
-```python
-import logging
-logging.basicConfig(level=logging.INFO)
-```
+### Multi-turn not working
+- Make sure to @mention the bot in the thread (not slash command)
+- Check logs for "Multi-turn: X previous messages"
 
-### Add Caching
-```python
-from functools import lru_cache
-ask = lru_cache(maxsize=100)(ask)
-```
+### SQL not displaying
+- Check logs for "Found SQL in execution trace"
+- Verify `cortex_analyst_text_to_sql` tool was used
 
-### Add Rich Formatting
-```python
-def format_for_slack(answer):
-    # Custom Slack block formatting
-    return formatted_blocks
-```
+## Future Improvements
 
-### Add Conversation Context
-```python
-thread_memory = {}
-
-def ask_with_context(question, thread_id):
-    context = thread_memory.get(thread_id, [])
-    # Include context in question or use Snowflake's thread_id parameter
-    return ask(question)
-```
-
-## Development Approach
-
-This bot was built by:
-
-1. **Testing the real API first** - Captured actual Snowflake agent responses
-2. **Understanding the streaming format** - Server-Sent Events with specific event types
-3. **Simplifying based on reality** - Let Snowflake handle orchestration
-4. **Building incrementally** - Start with core, add features as needed
-
-See `testing_ground/` for the research and testing process.
-
-## Slack App Setup
-
-To deploy to Slack:
-
-1. **Create Slack App** at https://api.slack.com/apps
-2. **Enable Socket Mode** (easiest for getting started)
-3. **Add Bot Token Scopes:**
-   - `chat:write`
-   - `commands`
-   - `app_mentions:read`
-4. **Create Slash Commands** (optional):
-   - `/ask-acme` - General questions
-   - `/contracts` - Contract analysis
-   - `/perf` - Performance analysis
-5. **Install to Workspace**
-6. **Get tokens** and set environment variables
-
-## Production Considerations
-
-For production deployment, consider adding:
-
-- Secure token storage (not environment variables)
-- Error handling and retries
-- Rate limiting
-- Usage analytics
-- Logging and monitoring
-- Conversation threading (using Snowflake's thread_id parameter)
-- Interactive Slack components (buttons, modals)
-
-## Available Agents
-
-Your Snowflake Intelligence platform has:
-
-- **ACME_INTELLIGENCE_AGENT** - Comprehensive business intelligence (default)
-- **ACME_CONTRACTS_AGENT** - Contract analysis and churn prevention
-- **DATA_ENGINEER_ASSISTANT** - Query performance and optimization
-
-The intelligence agent has access to all semantic models and can handle most questions.
+See `notes_to_self.md` for detailed improvement roadmap including:
+- Update progress in place (not separate messages)
+- Rich Slack blocks with sections
+- Interactive buttons for "Show SQL", "Export Data"
+- Thread context expiry (memory management)
+- Usage analytics and monitoring
 
 ## Learn More
 
-- **`testing_ground/examples.md`** - Real API response examples and patterns
-- **`testing_ground/test_with_pat.py`** - Working test code
-- **`quick_start.ipynb`** - Interactive experimentation
+- **`notes_to_self.md`** - Detailed technical documentation and improvement roadmap
+- **`testing_ground/examples.md`** - Real API response examples
+- **`testing_ground/test_with_pat.py`** - Working API test
+- **`quick_start.ipynb`** - Interactive notebook
 
 ---
 
-**Built with simplicity in mind** - Let Snowflake's intelligence do what it does best.
+**Simple by design** - Leverages Snowflake's Intelligence layers to provide enterprise AI in Slack.
