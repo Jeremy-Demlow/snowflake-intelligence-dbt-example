@@ -69,6 +69,69 @@ WHERE c.status = 'Activated';
 
 ---
 
+## 🔄 **Incremental Data Updates - Keep Your Demo Fresh!**
+
+### **Quick Update (Recommended)**
+```bash
+cd data_setup
+conda activate service_titan
+./run_incremental_update.sh
+```
+
+This script automatically:
+- ✅ Completes jobs that were scheduled but not finished
+- ✅ Adds realistic customer reviews (60% review rate)
+- ✅ Maintains demo narrative (underperforming technicians)
+- ✅ Adds billing data for the current month
+- ✅ Updates data through today's date
+
+### **Manual Incremental Update**
+```bash
+cd data_setup
+conda activate service_titan
+python update_incremental_data.py
+```
+
+### **What Gets Updated?**
+
+The incremental update system:
+1. **Completes Scheduled Jobs** - Marks jobs as completed with realistic completion dates
+2. **Generates Reviews** - Adds reviews for ~60% of completed jobs
+3. **Maintains Narratives** - Ensures TECH_015 and TECH_023 keep poor ratings
+4. **Adds Billing Data** - Generates monthly billing records for active contracts
+
+### **When to Run Updates**
+
+Run incremental updates:
+- **Weekly**: Keep demo data current for presentations
+- **After demos**: Add fresh data for the next demo
+- **Monthly**: Ensure billing data stays current
+- **Before dbt runs**: So transformed models have latest data
+
+### **Verify Your Update**
+```bash
+# Check latest data dates
+snow sql -c snowflake_intelligence -q "
+SELECT 'Jobs' as metric, MAX(completed_date) as latest 
+FROM ACME_INTELLIGENCE.RAW.JOBS WHERE job_status = 'Completed'
+UNION ALL
+SELECT 'Reviews', MAX(review_date) 
+FROM ACME_INTELLIGENCE.RAW.REVIEWS
+UNION ALL  
+SELECT 'Billing', MAX(trans_date)
+FROM ACME_INTELLIGENCE.RAW.ACME_BILLING_DATA;
+"
+```
+
+**Expected Output (as of Oct 20, 2025):**
+```
+Jobs:    2025-10-18
+Reviews: 2025-10-18
+Billing: 2025-10-01
+```
+
+---
+
 ## 🛠 **How the Data Generation Works**
 
 ### **System Architecture**

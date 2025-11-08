@@ -2,7 +2,7 @@
 # Override settings for development/testing
 
 agent:
-  database: "DEV_SNOWFLAKE_INTELLIGENCE"  # Use dev database
+  database: "SNOWFLAKE_INTELLIGENCE"  # Use same database as production (no separate dev db)
   
 default_execution_environment:
-  warehouse: "DEV_WAREHOUSE"  # Smaller warehouse for dev
+  warehouse: "HOL_WAREHOUSE"  # Use same warehouse (no separate dev warehouse)

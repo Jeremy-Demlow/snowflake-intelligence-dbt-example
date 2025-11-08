@@ -1,7 +1,7 @@
 -- Data Engineer Assistant - Generated from YAML Configuration
 -- Scalable, maintainable agent deployment
 
-CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.DATA_ENGINEER_ASSISTANT
+CREATE OR REPLACE AGENT DEV_SNOWFLAKE_INTELLIGENCE.AGENTS.DATA_ENGINEER_ASSISTANT
 WITH PROFILE = '{"display_name": "Data Engineer Assistant"}'  
 COMMENT = 'AI-powered assistant analyzing query history and usage patterns to deliver personalized, actionable recommendations to lower costs and improve performance - integrated with existing ACME Intelligence platform'
 FROM SPECIFICATION $${

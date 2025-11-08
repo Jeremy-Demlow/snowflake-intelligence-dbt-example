@@ -66,7 +66,7 @@ tools:
   - name: "Query Operational Data"
     type: "cortex_analyst_text_to_sql"
     description: >
-      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_analytics_view
+      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_semantic_view
       - Database: ACME_INTELLIGENCE, Schema: SEMANTIC_MODELS
       - Contains comprehensive technician performance and operational efficiency metrics
       - Serves as primary source for service quality monitoring, revenue per technician, and operational excellence tracking
@@ -85,7 +85,7 @@ tools:
       BUSINESS PURPOSE: Monitor operational excellence, optimize service delivery, track revenue per service unit,
       identify training needs, guide capacity planning, and ensure customer satisfaction alignment with financial performance.
     resources:
-      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_analytics_view"
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_semantic_view"
       execution_environment: 
         <<: *default_execution_environment
 
@@ -93,7 +93,7 @@ tools:
   - name: "Query Financial Metrics"
     type: "cortex_analyst_text_to_sql"
     description: >
-      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_financial_analytics_view
+      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_financial_semantic_view
       - Database: ACME_INTELLIGENCE, Schema: SEMANTIC_MODELS
       - Contains comprehensive NDR, ARR expansion, and customer segmentation financial performance data
       - Serves as primary source for financial health monitoring, growth tracking, and strategic financial planning
@@ -109,7 +109,7 @@ tools:
       BUSINESS PURPOSE: Monitor financial health, track revenue expansion, analyze customer value creation,
       guide pricing strategies, identify growth opportunities, and ensure sustainable financial performance.
     resources:
-      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_financial_analytics_view"
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_financial_semantic_view"
       execution_environment:
         <<: *default_execution_environment
 
@@ -117,7 +117,7 @@ tools:
   - name: "Query Contracts Data"
     type: "cortex_analyst_text_to_sql"
     description: >
-      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_analytics_view
+      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_semantic_view
       - Database: ACME_INTELLIGENCE, Schema: SEMANTIC_MODELS
       - Contains comprehensive contract performance, commitment tracking, and revenue risk assessment data
       - Serves as primary source for contract health monitoring, churn prevention, and revenue assurance
@@ -133,7 +133,7 @@ tools:
       BUSINESS PURPOSE: Monitor contract portfolio health, prevent customer churn, ensure revenue realization,
       identify expansion opportunities, guide customer success strategies, and optimize contract terms for mutual value.
     resources:
-      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_analytics_view"
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_semantic_view"
       execution_environment:
         <<: *default_execution_environment
 

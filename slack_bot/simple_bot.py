@@ -11,12 +11,23 @@ import re
 import logging
 import time
 from typing import Optional
+from io import BytesIO
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Chart rendering imports (optional - for Vega-Lite chart support)
+try:
+    import altair as alt
+    import vl_convert as vlc
+    CHARTS_AVAILABLE = True
+    logger.info("Chart rendering available (Vega-Lite to PNG)")
+except ImportError:
+    CHARTS_AVAILABLE = False
+    logger.info("Chart rendering not available - install altair and vl-convert-python for chart support")
 
 # Import Slack only if needed (progressive disclosure!)
 try:
@@ -52,6 +63,28 @@ thread_context = {}
 
 # ─── Core Function: Ask an Agent ──────────────────────────────────────────────
 # This is the whole API. One function. That's it.
+
+def vega_to_png(vega_spec: dict) -> BytesIO:
+    """
+    Convert a Vega-Lite specification to a PNG image.
+    
+    Args:
+        vega_spec: Vega-Lite JSON specification
+    
+    Returns:
+        BytesIO object containing PNG image data
+    """
+    if not CHARTS_AVAILABLE:
+        raise RuntimeError("Chart rendering not available. Install: pip install altair vl-convert-python")
+    
+    try:
+        # Convert Vega-Lite spec to PNG using vl-convert
+        png_data = vlc.vegalite_to_png(vega_spec, scale=2)
+        return BytesIO(png_data)
+    except Exception as e:
+        logger.error(f"Failed to convert Vega-Lite to PNG: {e}")
+        raise
+
 
 def format_for_slack(answer: str, question: str = "") -> str:
     """
@@ -119,7 +152,7 @@ def ask_agent(question: str, agent: str = "intelligence", conversation_history: 
         conversation_history: List of previous messages for multi-turn context
     
     Returns:
-        dict with 'answer' (str), 'thinking' (str), 'tools_used' (list)
+        dict with 'answer' (str), 'thinking' (str), 'tools_used' (list), 'chart_specs' (list)
     """
     agent_name = AGENTS.get(agent, AGENTS["intelligence"])
     
@@ -152,7 +185,11 @@ def ask_agent(question: str, agent: str = "intelligence", conversation_history: 
         response.raise_for_status()
         
         # Parse streaming response with progress updates
-        result = {"answer": "", "thinking": "", "tools_used": [], "raw_events": [], "sql": None, "thread_id": None, "message_id": None}
+        result = {
+            "answer": "", "thinking": "", "tools_used": [], "raw_events": [], 
+            "sql": None, "thread_id": None, "message_id": None,
+            "result_set": None, "column_names": [], "chart_specs": []
+        }
         last_status = None
         
         for line in response.iter_lines(decode_unicode=True):
@@ -172,15 +209,55 @@ def ask_agent(question: str, agent: str = "intelligence", conversation_history: 
                             result["thread_id"] = data['thread_id']
                             logger.info(f"Got thread_id: {data['thread_id']}")
                     
-                    # Extract SQL from execution_trace event - this is where the real SQL is!
+                    # Extract chart specifications from response.chart events
+                    if event_type == 'response.chart':
+                        chart_spec_str = data.get('chart_spec')
+                        if chart_spec_str:
+                            try:
+                                chart_spec = json.loads(chart_spec_str)
+                                result["chart_specs"].append({
+                                    'spec': chart_spec,
+                                    'tool_use_id': data.get('tool_use_id'),
+                                    'content_index': data.get('content_index')
+                                })
+                                logger.info(f"📊 Found Vega-Lite chart specification (type: {chart_spec.get('mark', 'unknown')})")
+                            except json.JSONDecodeError:
+                                logger.warning(f"Failed to parse chart_spec: {chart_spec_str[:100]}")
+                    
+                    # Extract SQL and result data from tool_result
+                    if event_type == 'response.tool_result':
+                        logger.debug(f"Got tool_result event: {data.get('type', 'unknown type')}")
+                        if data.get('type') == 'cortex_analyst_text_to_sql' or data.get('tool_type') == 'cortex_analyst_text_to_sql':
+                            content = data.get('content', [])
+                            logger.debug(f"Tool result content items: {len(content)}")
+                            for item in content:
+                                if isinstance(item, dict) and 'json' in item:
+                                    json_data = item['json']
+                                    logger.debug(f"JSON data keys: {json_data.keys()}")
+                                    # Extract SQL
+                                    if 'sql' in json_data and not result.get("sql"):
+                                        result["sql"] = json_data['sql']
+                                        logger.info(f"📊 Found SQL in tool_result: {result['sql'][:80]}...")
+                                    # Extract result set
+                                    if 'result_set' in json_data:
+                                        result["result_set"] = json_data['result_set']
+                                        num_rows = len(json_data['result_set'].get('data', []))
+                                        logger.info(f"📋 Found result_set with {num_rows} rows")
+                                        # Extract column names
+                                        metadata = json_data['result_set'].get('resultSetMetaData', {})
+                                        row_types = metadata.get('rowType', [])
+                                        result["column_names"] = [col['name'] for col in row_types]
+                                        logger.info(f"📝 Column names: {result['column_names']}")
+                                    else:
+                                        logger.warning(f"No result_set in json_data. Available keys: {list(json_data.keys())}")
+                    
+                    # Also extract from execution_trace as backup
                     if event_type == 'execution_trace':
-                        # The execution trace contains the actual SQL
                         if isinstance(data, list):
                             for trace_item in data:
                                 if isinstance(trace_item, str):
                                     try:
                                         trace_json = json.loads(trace_item)
-                                        # Look for SQL in attributes
                                         for attr in trace_json.get('attributes', []):
                                             if attr.get('key') == 'snow.ai.observability.agent.tool.cortex_analyst.sql_query':
                                                 sql = attr.get('value', {}).get('stringValue')
@@ -196,6 +273,19 @@ def ask_agent(question: str, agent: str = "intelligence", conversation_history: 
                         if status_msg != last_status and progress_callback:
                             progress_callback(status_msg)
                             last_status = status_msg
+                    
+                    # Extract table data from response.table events
+                    if event_type == 'response.table':
+                        logger.info(f"📊 Found response.table event!")
+                        if 'result_set' in data:
+                            result["result_set"] = data['result_set']
+                            num_rows = len(data['result_set'].get('data', []))
+                            logger.info(f"📋 Found result_set in response.table: {num_rows} rows")
+                            # Extract column names
+                            metadata = data['result_set'].get('resultSetMetaData', {})
+                            row_types = metadata.get('rowType', [])
+                            result["column_names"] = [col['name'] for col in row_types]
+                            logger.info(f"📝 Column names from table: {result['column_names']}")
                     
                     # Extract the good stuff
                     if 'text' in data and event_type == 'response.text.delta':
@@ -274,15 +364,16 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
         
         logger.info(f"Message received: '{question}' (in_thread={is_in_thread}, has_context={in_our_thread})")
         
-        # Show smart progress - updates every 5s or on key milestones
+        # Show smart progress - UPDATE IN PLACE (not new messages!)
         start_time = time.time()
         last_update = start_time
-        progress_msg = None
+        progress_msg = say("🤔 Analyzing...", thread_ts=thread_ts)
+        progress_msg_ts = progress_msg['ts']
         seen_statuses = set()
         
-        # Smart progress callback - only show important/unique updates
+        # Smart progress callback - updates ONE message
         def show_smart_progress(status):
-            nonlocal last_update, progress_msg, seen_statuses
+            nonlocal last_update, progress_msg_ts, seen_statuses
             
             now = time.time()
             status_key = status.lower().split()[0]  # First word
@@ -313,7 +404,15 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
                 }
                 emoji = emoji_map.get(status_key, "⏳")
                 
-                say(f"{emoji} {status}...", thread_ts=thread_ts)
+                # UPDATE the existing message instead of posting new one
+                try:
+                    app.client.chat_update(
+                        channel=message['channel'],
+                        ts=progress_msg_ts,
+                        text=f"{emoji} {status}..."
+                    )
+                except Exception as e:
+                    logger.warning(f"Could not update progress: {e}")
         
         try:
             # Get conversation history for multi-turn
@@ -334,20 +433,18 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
             
             elapsed = time.time() - start_time
             
-            # Build clean response with proper Slack formatting
+            # Build response with Rich Slack Blocks
             answer = result["answer"]
             if len(answer) > 2500:
                 answer = answer[:2400] + "\n\n_... (truncated)_"
             
             # Fix Markdown formatting for Slack
-            # Slack uses *text* for bold, not **text**
             answer = answer.replace('**', '*')
             
             # Clean up verbose sections
             lines = answer.split('\n')
             cleaned_lines = []
             for line in lines:
-                # Skip overly verbose explanatory text
                 if any(skip in line.lower() for skip in [
                     'this count comes from',
                     'data spans from',
@@ -356,19 +453,159 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
                 ]):
                     continue
                 cleaned_lines.append(line)
-            
             answer = '\n'.join(cleaned_lines)
             
-            # Add SQL in code block if available
+            # Build Rich Slack Blocks
+            blocks = [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": answer
+                    }
+                }
+            ]
+            
+            # Add data table if available (for analyst users who want raw data!)
+            if result.get("result_set"):
+                data_rows = result["result_set"].get("data", [])
+                num_rows = len(data_rows)
+                
+                logger.info(f"📊 Displaying result_set: {num_rows} rows")
+                
+                if num_rows > 0:  # Show any results up to 100 rows
+                    blocks.append({"type": "divider"})
+                    
+                    # Format data as table
+                    col_names = result.get("column_names", [])
+                    
+                    # Show up to 15 rows inline (good balance for Slack)
+                    display_limit = min(15, num_rows)
+                    display_rows = data_rows[:display_limit]
+                    
+                    # Build table text with better formatting
+                    table_lines = []
+                    if col_names:
+                        # Header row
+                        header = " | ".join(str(col)[:20] for col in col_names)
+                        table_lines.append(header)
+                        table_lines.append("-" * min(len(header), 80))
+                    
+                    # Data rows
+                    for row in display_rows:
+                        row_text = " | ".join(str(val)[:20] for val in row)
+                        table_lines.append(row_text)
+                    
+                    table_text = "\n".join(table_lines)
+                    
+                    # Add data block with clear label
+                    blocks.append({
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": f"*📊 Query Results ({num_rows} row{'s' if num_rows != 1 else ''}):*\n```\n{table_text}\n```"
+                        }
+                    })
+                    
+                    # If more rows available, mention it
+                    if num_rows > display_limit:
+                        blocks.append({
+                            "type": "context",
+                            "elements": [{
+                                "type": "mrkdwn",
+                                "text": f"_Showing first {display_limit} of {num_rows} rows • Ask for specific rows if you need more_"
+                            }]
+                        })
+            
+            # Add SQL section if available
             if result.get("sql") and result["sql"] != "SQL query executed":
-                sql_preview = result["sql"][:500]
-                answer += f"\n\n```sql\n{sql_preview}\n```"
+                sql_text = result["sql"]
+                # Slack block limit is 3000 chars total, including markdown
+                # Accounting for "*Generated SQL:*\n```\n" (20 chars) and closing "```" (3 chars)
+                max_sql_length = 2950
+                if len(sql_text) > max_sql_length:
+                    sql_text = sql_text[:max_sql_length] + "\n... (truncated for length)"
+                sql_preview = sql_text
+                blocks.append({"type": "divider"})
+                blocks.append({
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"*Generated SQL:*\n```{sql_preview}```"
+                    }
+                })
             
             # Add metadata footer
             tools_used = ', '.join(set(result["tools_used"])) if result["tools_used"] else "None"
-            answer += f"\n\n_⏱️ {elapsed:.1f}s • Tools: {tools_used}_"
+            blocks.append({
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"⏱️ {elapsed:.1f}s • 🔧 Tools: {tools_used}"
+                    }
+                ]
+            })
             
-            say(answer, thread_ts=thread_ts)
+            # Post with blocks
+            say(blocks=blocks, text=answer[:500], thread_ts=thread_ts)  # text is fallback
+            
+            # Upload charts if available
+            if result.get("chart_specs") and CHARTS_AVAILABLE:
+                for idx, chart_info in enumerate(result["chart_specs"]):
+                    try:
+                        chart_spec = chart_info['spec']
+                        chart_type = chart_spec.get('mark', 'chart')
+                        
+                        # Convert Vega-Lite to PNG
+                        png_buffer = vega_to_png(chart_spec)
+                        png_buffer.seek(0)  # Reset buffer position
+                        
+                        # Upload to Slack
+                        upload_result = app.client.files_upload_v2(
+                            channel=message['channel'],
+                            file=png_buffer.getvalue(),
+                            filename=f"chart_{idx+1}_{chart_type}.png",
+                            title=f"📊 Chart: {chart_type.title()}",
+                            thread_ts=thread_ts
+                        )
+                        logger.info(f"✅ Uploaded chart {idx+1} to Slack (file_id: {upload_result.get('file', {}).get('id', 'unknown')})")
+                    except Exception as e:
+                        logger.error(f"Failed to upload chart {idx+1}: {e}")
+                        say(f"⚠️ Could not render chart {idx+1}", thread_ts=thread_ts)
+            
+            # Upload data as CSV if available
+            if result.get("result_set") and result["result_set"].get("data"):
+                try:
+                    import csv
+                    from io import StringIO
+                    
+                    data_rows = result["result_set"]["data"]
+                    col_names = result.get("column_names", [])
+                    
+                    # Create CSV
+                    csv_buffer = StringIO()
+                    writer = csv.writer(csv_buffer)
+                    
+                    # Write header
+                    if col_names:
+                        writer.writerow(col_names)
+                    
+                    # Write data rows
+                    writer.writerows(data_rows)
+                    
+                    # Upload CSV to Slack
+                    csv_buffer.seek(0)
+                    app.client.files_upload_v2(
+                        channel=message['channel'],
+                        content=csv_buffer.getvalue(),
+                        filename="query_results.csv",
+                        title=f"📥 Data Export ({len(data_rows)} rows)",
+                        thread_ts=thread_ts
+                    )
+                    logger.info(f"✅ Uploaded CSV with {len(data_rows)} rows")
+                except Exception as e:
+                    logger.error(f"Failed to upload CSV: {e}")
             
             # Save conversation history for multi-turn follow-ups
             # Add user question
@@ -412,21 +649,21 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
             logger.info(f"Slash command: /ask-acme '{question}'")
             start_time = time.time()  # Track timing
             
-            # Post the question publicly with proper Slack formatting
+            # Post the question publicly with Rich Blocks
             question_msg = say(
                 blocks=[
+                    {
+                        "type": "header",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "💬 New Question"
+                        }
+                    },
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": f"<@{user_id}> asked:"
-                        }
-                    },
-                    {
-                        "type": "section", 
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": f"*{question}*"
+                            "text": f"*Asked by:* <@{user_id}>\n*Question:* {question}"
                         }
                     }
                 ],
@@ -435,17 +672,54 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
             )
             thread_ts = question_msg['ts']
             
-            # Show thinking in thread
-            say("🤔 Analyzing...", thread_ts=thread_ts)
+            # Show initial progress in thread (will update in place)
+            progress_msg = say("🤔 Analyzing...", thread_ts=thread_ts)
+            progress_msg_ts = progress_msg['ts']
+            last_update = start_time
+            seen_statuses = set()
+            
+            # Progress callback that UPDATES the message
+            def update_progress(status):
+                nonlocal last_update, seen_statuses
+                now = time.time()
+                status_key = status.lower().split()[0]
+                
+                # Key milestones or 5s intervals
+                key_milestones = ["planning", "executing", "generating", "forming"]
+                is_milestone = any(m in status_key for m in key_milestones)
+                should_update = is_milestone or (now - last_update >= 5.0)
+                
+                if status_key in seen_statuses and not should_update:
+                    return
+                
+                if should_update:
+                    seen_statuses.add(status_key)
+                    last_update = now
+                    
+                    emoji_map = {
+                        "planning": "🧠", "executing": "⚡", "generating": "✨",
+                        "forming": "📝", "running": "🔧", "streaming": "📊"
+                    }
+                    emoji = emoji_map.get(status_key, "⏳")
+                    
+                    try:
+                        app.client.chat_update(
+                            channel=channel_id,
+                            ts=progress_msg_ts,
+                            text=f"{emoji} {status}..."
+                        )
+                    except Exception as e:
+                        logger.warning(f"Could not update progress: {e}")
             
             # Get conversation history (empty for first message)
             conversation_history = thread_context.get(thread_ts, [])
             
-            # Call agent with conversation history for multi-turn
+            # Call agent with conversation history and progress callback
             result = ask_agent(
                 question, 
                 "intelligence",
-                conversation_history=conversation_history
+                conversation_history=conversation_history,
+                progress_callback=update_progress
             )
             
             if not result["answer"]:
@@ -455,7 +729,16 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
             # Calculate elapsed time
             elapsed = time.time() - start_time
             
-            # Build the response with proper Slack formatting
+            # Clean up final progress message to show completion
+            try:
+                app.client.chat_update(
+                    channel=channel_id,
+                    ts=progress_msg_ts,
+                    text=f"✅ Completed in {elapsed:.1f}s"
+                )
+            except: pass
+            
+            # Build response with proper formatting
             answer = result["answer"]
             if len(answer) > 2500:
                 answer = answer[:2400] + "\n\n_... (truncated)_"
@@ -468,24 +751,166 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
             cleaned_lines = []
             for line in lines:
                 if any(skip in line.lower() for skip in [
-                    'this count comes from',
-                    'data spans from', 
-                    'this customer count is derived'
+                    'this count comes from', 'data spans from', 'this customer count is derived'
                 ]):
                     continue
                 cleaned_lines.append(line)
             answer = '\n'.join(cleaned_lines)
             
-            # Add SQL in code block if available
+            # Build Rich Slack Blocks for answer
+            blocks = [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": answer
+                    }
+                }
+            ]
+            
+            # Add data table if available
+            if result.get("result_set"):
+                data_rows = result["result_set"].get("data", [])
+                num_rows = len(data_rows)
+                
+                logger.info(f"📊 Displaying result_set: {num_rows} rows")
+                
+                if num_rows > 0:
+                    blocks.append({"type": "divider"})
+                    
+                    # Format data as table
+                    col_names = result.get("column_names", [])
+                    
+                    # Show up to 15 rows inline
+                    display_limit = min(15, num_rows)
+                    display_rows = data_rows[:display_limit]
+                    
+                    # Build table text
+                    table_lines = []
+                    if col_names:
+                        # Header row
+                        header = " | ".join(str(col)[:20] for col in col_names)
+                        table_lines.append(header)
+                        table_lines.append("-" * min(len(header), 80))
+                    
+                    # Data rows
+                    for row in display_rows:
+                        row_text = " | ".join(str(val)[:20] for val in row)
+                        table_lines.append(row_text)
+                    
+                    table_text = "\n".join(table_lines)
+                    
+                    # Ensure table doesn't exceed Slack's 3000 char limit
+                    # Account for "*📊 Query Results...*\n```\n" and "```" 
+                    max_table_length = 2900
+                    if len(table_text) > max_table_length:
+                        table_text = table_text[:max_table_length] + "\n... (truncated)"
+                    
+                    # Add data block
+                    blocks.append({
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": f"*📊 Query Results ({num_rows} row{'s' if num_rows != 1 else ''}):*\n```\n{table_text}\n```"
+                        }
+                    })
+                    
+                    # If more rows available, mention it
+                    if num_rows > display_limit:
+                        blocks.append({
+                            "type": "context",
+                            "elements": [{
+                                "type": "mrkdwn",
+                                "text": f"_Showing first {display_limit} of {num_rows} rows • Ask for specific rows if you need more_"
+                            }]
+                        })
+            
+            # Add SQL section if available
             if result.get("sql") and result["sql"] != "SQL query executed":
-                sql_preview = result["sql"][:500]
-                answer += f"\n\n```sql\n{sql_preview}\n```"
+                sql_text = result["sql"]
+                # Limit to 3000 chars (Slack's block limit is ~3000)
+                if len(sql_text) > 2900:
+                    sql_text = sql_text[:2900] + "\n... (truncated)"
+                blocks.append({"type": "divider"})
+                blocks.append({
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"*Generated SQL:*\n```{sql_text}```"
+                    }
+                })
             
-            # Add metadata footer with tools and timing
+            # Add metadata footer
             tools_used = ', '.join(set(result["tools_used"])) if result["tools_used"] else "None"
-            answer += f"\n\n_⏱️ {elapsed:.1f}s • Tools: {tools_used}_"
+            blocks.append({
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"⏱️ {elapsed:.1f}s • 🔧 {tools_used}"
+                    }
+                ]
+            })
             
-            say(answer, thread_ts=thread_ts)
+            # Post with blocks
+            say(blocks=blocks, text=answer[:500], thread_ts=thread_ts)
+            
+            # Upload charts if available
+            if result.get("chart_specs") and CHARTS_AVAILABLE:
+                for idx, chart_info in enumerate(result["chart_specs"]):
+                    try:
+                        chart_spec = chart_info['spec']
+                        chart_type = chart_spec.get('mark', 'chart')
+                        
+                        # Convert Vega-Lite to PNG
+                        png_buffer = vega_to_png(chart_spec)
+                        png_buffer.seek(0)  # Reset buffer position
+                        
+                        # Upload to Slack
+                        upload_result = app.client.files_upload_v2(
+                            channel=channel_id,
+                            file=png_buffer.getvalue(),
+                            filename=f"chart_{idx+1}_{chart_type}.png",
+                            title=f"📊 Chart: {chart_type.title()}",
+                            thread_ts=thread_ts
+                        )
+                        logger.info(f"✅ Uploaded chart {idx+1} to Slack (file_id: {upload_result.get('file', {}).get('id', 'unknown')})")
+                    except Exception as e:
+                        logger.error(f"Failed to upload chart {idx+1}: {e}")
+                        say(f"⚠️ Could not render chart {idx+1}", thread_ts=thread_ts)
+            
+            # Upload data as CSV if available
+            if result.get("result_set") and result["result_set"].get("data"):
+                try:
+                    import csv
+                    from io import StringIO
+                    
+                    data_rows = result["result_set"]["data"]
+                    col_names = result.get("column_names", [])
+                    
+                    # Create CSV
+                    csv_buffer = StringIO()
+                    writer = csv.writer(csv_buffer)
+                    
+                    # Write header
+                    if col_names:
+                        writer.writerow(col_names)
+                    
+                    # Write data rows
+                    writer.writerows(data_rows)
+                    
+                    # Upload CSV to Slack
+                    csv_buffer.seek(0)
+                    app.client.files_upload_v2(
+                        channel=channel_id,
+                        content=csv_buffer.getvalue(),
+                        filename="query_results.csv",
+                        title=f"📥 Data Export ({len(data_rows)} rows)",
+                        thread_ts=thread_ts
+                    )
+                    logger.info(f"✅ Uploaded CSV with {len(data_rows)} rows")
+                except Exception as e:
+                    logger.error(f"Failed to upload CSV: {e}")
             
             # Save conversation history for follow-ups
             conversation_history.append({
@@ -571,16 +996,6 @@ if SLACK_AVAILABLE and SLACK_BOT_TOKEN and SLACK_APP_TOKEN:
         print(f"   Agents: {', '.join(AGENTS.values())}")
         print()
         SocketModeHandler(app, SLACK_APP_TOKEN).start()
-
-    
-    def start():
-        """Start the Slack bot"""
-        print("🚀 Starting ACME Intelligence Slack Bot...")
-        print(f"   Account: {ACCOUNT}")
-        print(f"   Agents: {', '.join(AGENTS.values())}")
-        print()
-        SocketModeHandler(app, SLACK_APP_TOKEN).start()
-
 else:
     if not SLACK_AVAILABLE:
         logger.info("Slack Bolt not installed - install with: pip install slack-bolt")

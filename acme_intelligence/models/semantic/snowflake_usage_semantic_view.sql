@@ -7,9 +7,7 @@
 -- Snowflake Performance Coach Semantic View - Using OUR materialized table
 -- This works because we're using a table WE control, not ACCOUNT_USAGE directly
 
-CREATE OR REPLACE SEMANTIC VIEW {{ target.database }}.SEMANTIC_MODELS.snowflake_usage_analytics_view
-
-  TABLES (
+TABLES (
     -- Our materialized performance table (following your working pattern!)
     PERF_DATA AS {{ ref('fct_query_performance') }}
       PRIMARY KEY (query_id)

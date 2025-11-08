@@ -25,9 +25,7 @@
 -- "Show me NDR trends by market segment over the last 6 months"
 -- "Which customer segments have the highest ARR expansion?"
 
-CREATE OR REPLACE SEMANTIC VIEW {{ target.database }}.SEMANTIC_MODELS.acme_financial_analytics_view
-
-  TABLES (
+TABLES (
     -- Core NDR calculations fact table
     NDR_DATA AS {{ ref('fct_ndr_calculations') }}
       PRIMARY KEY (NDR_PARENT, MONTH_ID)

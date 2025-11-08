@@ -61,7 +61,7 @@ tools:
   - name: "Query Usage Analytics"
     type: "cortex_analyst_text_to_sql"
     description: >
-      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.snowflake_usage_analytics_view
+      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.snowflake_usage_semantic_view
       - Database: ACME_INTELLIGENCE, Schema: SEMANTIC_MODELS
       - Comprehensive query performance analysis using QUERY_ATTRIBUTION_HISTORY and QUERY_HISTORY
       - Contains all 85+ columns for complete performance, cost, and usage analysis
@@ -83,7 +83,7 @@ tools:
       specific performance improvements, cost reduction strategies, and proactive optimization
       recommendations tailored to your actual Snowflake environment and usage patterns.
     resources:
-      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.snowflake_usage_analytics_view"
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.snowflake_usage_semantic_view"
       execution_environment: 
         <<: *default_execution_environment
 
@@ -155,7 +155,7 @@ tools:
       
       Use this for QUERY-SPECIFIC analysis while using the semantic view for WAREHOUSE-LEVEL trends.
     resources:
-      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.snowflake_usage_analytics_view"
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.snowflake_usage_semantic_view"
       execution_environment:
         <<: *default_execution_environment
 
