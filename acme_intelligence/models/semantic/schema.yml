@@ -8,13 +8,17 @@ models:
       semantic_view: true
       cortex_analyst_enabled: true
       business_domain: acme_analytics
+      materialization: semantic_view  # Uses official Snowflake-Labs/dbt_semantic_view package
+      package_version: 1.0.3
       deployment_methods:
-        - "dbt run --select acme_semantic_view (recommended)"
-        - "dbt compile && snow sql -f target/compiled/..."
-        - "dbt run-operation create_acme_semantic_view"
+        - "dbt run --select acme_semantic_view (recommended - uses official package)"
+        - "dbt run --select tag:semantic_view (deploy all semantic views)"
+      database_schema: "Controlled by dbt_project.yml: +schema: semantic_models"
+      actual_location: "ACME_INTELLIGENCE.SEMANTIC_MODELS.ACME_SEMANTIC_VIEW"
       
     # Note: Semantic views don't have traditional columns like regular tables
     # Instead, they define logical business entities (tables), relationships, facts, dimensions, and metrics
+    # The official Snowflake-Labs package automatically adds CREATE OR REPLACE SEMANTIC VIEW statement
 
   - name: snowflake_usage_semantic_view
     description: "Comprehensive Snowflake usage analytics semantic view for the Data Engineer Assistant, combining QUERY_ATTRIBUTION_HISTORY and QUERY_HISTORY with all 85+ columns for complete query performance analysis, cost optimization, and warehouse utilization insights."
@@ -23,9 +27,13 @@ models:
       semantic_view: true
       cortex_analyst_enabled: true
       business_domain: snowflake_performance_analytics
+      materialization: semantic_view  # Uses official Snowflake-Labs/dbt_semantic_view package
+      package_version: 1.0.3
       deployment_methods:
-        - "dbt run --select snowflake_usage_semantic_view (recommended)"
-        - "dbt compile && snow sql -f target/compiled/..."
+        - "dbt run --select snowflake_usage_semantic_view (recommended - uses official package)"
+        - "dbt run --select tag:semantic_view (deploy all semantic views)"
+      database_schema: "Controlled by dbt_project.yml: +schema: semantic_models"
+      actual_location: "ACME_INTELLIGENCE.SEMANTIC_MODELS.SNOWFLAKE_USAGE_SEMANTIC_VIEW"
       
     # Note: This semantic view provides comprehensive query performance analytics including:
     # - Query execution times, compilation times, and performance bottlenecks
@@ -33,6 +41,37 @@ models:
     # - User and workload analysis for capacity planning
     # - Error analysis and compilation issue identification
     # - Cost analysis by warehouse, user, and query type
+    # The official Snowflake-Labs package automatically adds CREATE OR REPLACE SEMANTIC VIEW statement
+
+  - name: acme_financial_semantic_view
+    description: "ACME Financial Intelligence semantic view for NDR analysis, ARR tracking, and customer segmentation. Enables natural language queries about revenue metrics, customer growth, and financial health."
+    
+    meta:
+      semantic_view: true
+      cortex_analyst_enabled: true
+      business_domain: financial_analytics
+      materialization: semantic_view  # Uses official Snowflake-Labs/dbt_semantic_view package
+      package_version: 1.0.3
+      deployment_methods:
+        - "dbt run --select acme_financial_semantic_view (recommended - uses official package)"
+        - "dbt run --select tag:semantic_view (deploy all semantic views)"
+      database_schema: "Controlled by dbt_project.yml: +schema: semantic_models"
+      actual_location: "ACME_INTELLIGENCE.SEMANTIC_MODELS.ACME_FINANCIAL_SEMANTIC_VIEW"
+
+  - name: acme_contracts_semantic_view
+    description: "ACME Contracts Intelligence semantic view for analyzing contracts, commitments, invoices, and churn. Enables natural language queries about contract lifecycle, billing variance, and exit ramp risk."
+    
+    meta:
+      semantic_view: true
+      cortex_analyst_enabled: true
+      business_domain: contract_analytics
+      materialization: semantic_view  # Uses official Snowflake-Labs/dbt_semantic_view package
+      package_version: 1.0.3
+      deployment_methods:
+        - "dbt run --select acme_contracts_semantic_view (recommended - uses official package)"
+        - "dbt run --select tag:semantic_view (deploy all semantic views)"
+      database_schema: "Controlled by dbt_project.yml: +schema: semantic_models"
+      actual_location: "ACME_INTELLIGENCE.SEMANTIC_MODELS.ACME_CONTRACTS_SEMANTIC_VIEW"
         
   - name: stg_parsed_documents
     description: "Parsed documents from stage for Cortex Search"

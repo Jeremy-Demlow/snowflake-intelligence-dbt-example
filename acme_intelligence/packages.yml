@@ -1,0 +1,6 @@
+packages:
+  # Official Snowflake-Labs semantic view package
+  # https://github.com/Snowflake-Labs/dbt_semantic_view
+  - package: Snowflake-Labs/dbt_semantic_view
+    version: 1.0.3  # Latest stable version
+

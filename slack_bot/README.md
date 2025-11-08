@@ -21,6 +21,7 @@ print(ask("How many customers do we have?"))
 - ✅ **Response timing** - See how long queries take
 - ✅ **Three slash commands** - `/ask-acme`, `/contracts`, `/perf`
 - ✅ **Works with @mentions** - Natural conversation in threads
+- ✅ **📊 Chart visualization** - Automatic chart rendering from Agent responses (NEW!)
 
 ## Architecture
 
@@ -64,6 +65,13 @@ slack_bot/
 conda activate your_env
 pip install -r requirements.txt
 ```
+
+**Optional - Enable Chart Visualization:**
+```bash
+pip install altair vl-convert-python
+```
+
+This enables automatic chart rendering when the Agent returns Vega-Lite specifications. See `CHART_FEATURE.md` for details.
 
 ### 2. Configure Environment Variables
 
@@ -216,6 +224,14 @@ SELECT COUNT(DISTINCT ndr_parent)...
 💡 Tip: Ask follow-ups by @mentioning me in this thread
 ```
 
+**Chart (when appropriate):**
+```
+📊 Generated chart visualization:
+[PNG image of chart appears in thread]
+```
+
+The Agent automatically creates charts for time-series, comparisons, and distributions!
+
 ## Technical Details
 
 ### Available Agents
@@ -275,6 +291,7 @@ See `notes_to_self.md` for detailed improvement roadmap including:
 
 ## Learn More
 
+- **`CHART_FEATURE.md`** - **NEW!** Complete guide to automatic chart visualization
 - **`notes_to_self.md`** - Detailed technical documentation and improvement roadmap
 - **`testing_ground/examples.md`** - Real API response examples
 - **`testing_ground/test_with_pat.py`** - Working API test

@@ -1,7 +1,7 @@
 -- ACME Contracts Intelligence Agent - Generated from YAML Configuration
 -- Scalable, maintainable agent deployment
 
-CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.ACME_CONTRACTS_AGENT
+CREATE OR REPLACE AGENT DEV_SNOWFLAKE_INTELLIGENCE.AGENTS.ACME_CONTRACTS_AGENT
 WITH PROFILE = '{"display_name": "ACME Contracts Intelligence Agent"}'  
 COMMENT = 'Enterprise-grade agent for analyzing contract commitments, churn, invoice variance, and exit ramp risks with optimized performance'
 FROM SPECIFICATION $${

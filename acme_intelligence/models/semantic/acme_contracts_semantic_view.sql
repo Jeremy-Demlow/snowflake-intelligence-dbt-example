@@ -27,9 +27,7 @@
 -- "What's the variance between commitments and invoiced amounts?"
 -- "Which accounts have exit ramp commitments?"
 
-CREATE OR REPLACE SEMANTIC VIEW {{ target.database }}.SEMANTIC_MODELS.acme_contracts_analytics_view
-
-  TABLES (
+TABLES (
     -- Core financial contracts and invoices fact table
     CONTRACTS_DATA AS {{ ref('fct_financial_contracts_invoices_simple') }}
       PRIMARY KEY (COMPOSITE_KEY)

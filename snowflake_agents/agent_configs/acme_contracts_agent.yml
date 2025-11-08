@@ -66,7 +66,7 @@ tools:
   - name: "Query Contracts Analytics"
     type: "cortex_analyst_text_to_sql"
     description: >
-      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_analytics_view
+      SEMANTIC VIEW: ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_semantic_view
       - Database: ACME_INTELLIGENCE, Schema: SEMANTIC_MODELS
       - Contains comprehensive contract performance data combining commitments with actual billing results
       - Serves as the primary source for contract health monitoring, churn analysis, and revenue risk assessment
@@ -94,7 +94,7 @@ tools:
       BUSINESS PURPOSE: Monitor contract health, track churn risk, analyze commitment variance, 
       identify revenue opportunities, assess customer retention needs, and guide strategic account management decisions.
     resources:
-      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_analytics_view"
+      semantic_view: "ACME_INTELLIGENCE.SEMANTIC_MODELS.acme_contracts_semantic_view"
       execution_environment:
         <<: *default_execution_environment
 

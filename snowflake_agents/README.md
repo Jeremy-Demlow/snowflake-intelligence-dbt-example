@@ -29,39 +29,76 @@ snowflake_agents/
 └── manage_agents.py                   # Agent management CLI
 ```
 
-## Usage
+## 🚀 Quick Start - Deploy All Agents
 
-### Deploy Agents
+### **Recommended: One-Command Deployment**
 ```bash
-# Generate SQL from YAML configs
-python agent_generator.py
-
-# Deploy specific agent
-snow sql -f generated/acme_intelligence_agent.sql
-
-# Deploy enhanced agents
-snow sql -f generated/acme_contracts_agent_enhanced.sql
-snow sql -f generated/acme_intelligence_agent_enhanced.sql
+cd snowflake_agents
+conda activate service_titan
+./deploy_all_agents.sh snowflake_intelligence
 ```
 
-### Generate Enhanced Agents
+This script automatically:
+- ✅ Regenerates all agent configurations from YAML
+- ✅ Deploys all 3 agents to Snowflake
+- ✅ Shows deployment summary
+- ✅ Uses updated semantic view names
+
+### **Manual Deployment**
+
+#### Generate SQL from YAML configs
 ```bash
-# Generate enhanced agents
-python agent_generator.py --agent acme_contracts_agent_enhanced
-python agent_generator.py --agent acme_intelligence_agent_enhanced
+conda activate service_titan
+python agent_generator.py
+```
+
+#### Deploy specific agent
+```bash
+snow sql -c snowflake_intelligence -f generated/acme_intelligence_agent.sql
+snow sql -c snowflake_intelligence -f generated/acme_contracts_agent.sql
+snow sql -c snowflake_intelligence -f generated/data_engineer_assistant.sql
+```
+
+### **Environment-Specific Generation**
+```bash
+# Generate for specific environment (optional)
+python agent_generator.py --environment dev
 
 # List available configurations
 python agent_generator.py --list
+
+# Generate specific agent
+python agent_generator.py --agent acme_intelligence_agent
 ```
 
 ### Agent Management
 ```bash
 # Check deployed agents
-snow sql -q "USE DATABASE SNOWFLAKE_INTELLIGENCE; USE SCHEMA AGENTS; SHOW AGENTS;"
+snow sql -c snowflake_intelligence -q "SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;"
+
+# Show semantic views agents are using
+snow sql -c snowflake_intelligence -q "SHOW SEMANTIC VIEWS IN SCHEMA ACME_INTELLIGENCE.SEMANTIC_MODELS;"
 
 # Test agent functionality
 snow sql -q "DESC AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.ACME_CONTRACTS_AGENT;"
 ```
+
+## 📦 Important: Semantic View Names (Updated Oct 20, 2025)
+
+**We migrated to the official [Snowflake-Labs/dbt_semantic_view](https://github.com/Snowflake-Labs/dbt_semantic_view) package (v1.0.3).**
+
+This changed the semantic view naming convention:
+
+| Agent Tool | Old Semantic View | New Semantic View |
+|------------|-------------------|-------------------|
+| Query Operational Data | acme_analytics_view | **acme_semantic_view** |
+| Query Financial Metrics | acme_financial_analytics_view | **acme_financial_semantic_view** |
+| Query Contracts Data | acme_contracts_analytics_view | **acme_contracts_semantic_view** |
+| Query Snowflake Usage | snowflake_usage_analytics_view | **snowflake_usage_semantic_view** |
+
+**All agent configs have been updated** and regenerating agents will use the correct names.
+
+**Location**: All semantic views are in `ACME_INTELLIGENCE.SEMANTIC_MODELS` schema.
 
 ## 🚀 Production-Grade Agent Patterns (Enhanced)
 

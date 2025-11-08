@@ -25,9 +25,7 @@
 -- "What's our total revenue by specialization?"
 -- "Show me technicians with high ratings in HVAC"
 
-CREATE OR REPLACE SEMANTIC VIEW {{ var('dbt_cortex_database') }}.{{ var('semantic_schema') }}.acme_analytics_view
-
-  TABLES (
+TABLES (
     -- Core technician performance dimension/fact table
     technician_performance AS {{ var('dbt_cortex_database') }}.{{ var('analytics_schema') }}.FCT_TECHNICIAN_PERFORMANCE
       PRIMARY KEY (TECHNICIAN_ID)

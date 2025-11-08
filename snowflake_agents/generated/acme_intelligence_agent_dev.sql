@@ -1,7 +1,7 @@
 -- ACME Intelligence Agent - Generated from YAML Configuration
 -- Scalable, maintainable agent deployment
 
-CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.ACME_INTELLIGENCE_AGENT
+CREATE OR REPLACE AGENT DEV_SNOWFLAKE_INTELLIGENCE.AGENTS.ACME_INTELLIGENCE_AGENT
 WITH PROFILE = '{"display_name": "ACME Intelligence Agent"}'  
 COMMENT = 'Enterprise-grade comprehensive business intelligence agent for operational, financial, and contracts analysis with optimized performance'
 FROM SPECIFICATION $${

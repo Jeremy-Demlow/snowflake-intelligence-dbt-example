@@ -131,4 +131,5 @@ experiments/
 # sample_data
 slack_bot/testing_ground/*
 slack_bot/notes_to_self.md
-
+data_setup/INCREMENTAL_UPDATE_SUMMARY.md
+OCTOBER_2025_UPDATES.md
